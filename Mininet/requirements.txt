@@ -1,0 +1,6 @@
+grpcio==1.74.0
+grpcio-tools==1.74.0
+protobuf==6.31.1
+scapy==2.6.1
+psutil==7.0.0
+requests==2.32.3

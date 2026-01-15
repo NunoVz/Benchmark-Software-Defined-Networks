@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Merge Benchmark Results</title>
+    <style>
+        :root {
+            --bg-body: #020617;
+            --bg-surface: rgba(15, 23, 42, 0.98);
+            --border-subtle: #1f2937;
+            --text-main: #e5e7eb;
+            --accent: #38bdf8;
+            --radius-lg: 14px;
+        }
+        body {
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-family: system-ui, sans-serif;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+        }
+        h1 { margin-top: 0; color: var(--accent); font-size: 24px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: #0f172a;
+            color: white;
+        }
+        .folder-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 10px;
+            background: #0b1120;
+        }
+        .folder-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .folder-item:last-child { border-bottom: none; }
+        .btn {
+            background: var(--accent);
+            color: #0b1120;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover { filter: brightness(1.1); }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(11, 17, 32, 0.3);
+            border-radius: 50%;
+            border-top-color: #0b1120;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .similarity-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            display: none;
+        }
+        .score-tag { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .tag-Consistent { background: #065f46; color: #34d399; }
+        .tag-Variable { background: #92400e; color: #fbbf24; }
+        .tag-Outlier { background: #7f1d1d; color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Merge Benchmark Runs</h1>
+        <p style="color: #9ca3af; font-size: 14px; margin-bottom: 20px;">
+            Select folders to average their results into a new dataset.
+        </p>
+
+        <div class="form-group">
+            <label>New Folder Name</label>
+            <input type="text" id="newFolderName" placeholder="e.g., Average_Run_Scenario_A">
+        </div>
+
+        <div class="form-group">
+            <label>Select Source Folders (min 2)</label>
+            <div class="folder-list">
+                {% for folder in folders %}
+                <div class="folder-item">
+                    <input type="checkbox" class="folder-check" value="{{ folder.name }}" id="f_{{ loop.index }}">
+                    <label for="f_{{ loop.index }}" style="margin:0; font-weight: normal; cursor: pointer;">{{ folder.name }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button class="btn" style="background: #1e293b; color: var(--accent); border: 1px solid var(--accent);" onclick="analyzeSimilarity()">Analyze Similarity</button>
+            <button class="btn" onclick="submitMerge()">Create Average Folder</button>
+        </div>
+
+        <div id="similarityBox" class="similarity-results">
+            <h3 style="font-size: 14px; margin-top: 0;">Similarity Analysis</h3>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; color: #9ca3af;">
+                        <th style="padding-bottom: 8px;">Folder</th>
+                        <th style="padding-bottom: 8px;">Avg. Deviation</th>
+                        <th style="padding-bottom: 8px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="similarityTableBody"></tbody>
+            </table>
+            <p style="font-size: 11px; color: #64748b; margin-top: 10px;">* Lower deviation means the run is closer to the group average.</p>
+        </div>
+
+        <a href="/" class="back-link">← Back to Dashboard</a>
+    </div>
+
+    <script>
+        function analyzeSimilarity() {
+            const checkboxes = document.querySelectorAll('.folder-check:checked');
+            const selected = Array.from(checkboxes).map(cb => cb.value);
+            if (selected.length < 2) return alert("Select at least 2 folders.");
+
+            fetch('/api/similarity', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ folders: selected })
+            }).then(r => r.json()).then(d => {
+                if(d.success) {
+                    const box = document.getElementById('similarityBox');
+                    const tbody = document.getElementById('similarityTableBody');
+                    tbody.innerHTML = '';
+                    d.results.forEach(res => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td style="padding: 5px 0;">${res.name}</td>
+                                <td>${res.deviation}%</td>
+                                <td><span class="score-tag tag-${res.status}">${res.status}</span></td>
+                            </tr>
+                        `;
+                    });
+                    box.style.display = 'block';
+                } else {
+                    alert("Error: " + d.error);
+                }
+            });
+        }
+
+        function submitMerge() {
+            const newName = document.getElementById('newFolderName').value;
+            const checkboxes = document.querySelectorAll('.folder-check:checked');
+            const selected = Array.from(checkboxes).map(cb => cb.value);
+
+            if (!newName) return alert("Please enter a name for the new folder.");
+            if (selected.length < 2) return alert("Please select at least 2 folders to merge.");
+
+            const btn = document.querySelector('.btn');
+            const originalText = btn.innerText;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Merging...';
+
+            fetch('/api/merge', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ new_name: newName, folders: selected })
+            }).then(r => r.json()).then(d => {
+                if(d.success) { alert("Merge successful!"); window.location.href = "/"; }
+                else { 
+                    alert("Error: " + d.error);
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+            }).catch(err => {
+                alert("Request failed: " + err);
+                btn.disabled = false;
+                btn.innerText = originalText;
+            });
+        }
+    </script>
+</body>
+</html>

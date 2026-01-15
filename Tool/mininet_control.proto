@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package mininet_control;
+
+service MininetControl {
+    rpc SayHello (Empty) returns (Message);
+    rpc SayGoodbye (Empty) returns (Message);
+    rpc WorkloadInitialize (WorkloadRequest) returns (TopologyData);
+    rpc WorkloadTerminate (Empty) returns (Response);
+    rpc CheckAndRestartOpenVSwitch (Empty) returns (Response);
+    rpc TrafficStart (Empty) returns (Response);
+    rpc TrafficStop (Empty) returns (Response);
+    rpc InstallFlows (FlowRequest) returns (Response);
+    rpc StartPing (Empty) returns (Response);
+    rpc StartArping (Empty) returns (Response);
+    rpc StartArpingAll (Empty) returns (Response); // <--- ADICIONAR ESTA LINHA
+    rpc ExecuteCommand (CommandRequest) returns (CommandResponse);
+    rpc GetLinkLength (LinkLengthRequest) returns (LinkLengthResponse);
+    rpc BatchPing (BatchPingRequest) returns (BatchPingResponse);
+    rpc FetchDitgResults (Empty) returns (DitgResults);
+
+}
+
+
+
+message Empty {}
+
+message Message {
+    string text = 1;
+}
+
+message Response {
+    string message = 1;
+}
+
+message FlowRequest {
+    string controller_name = 1;
+    string controller_ip = 2;
+    int32 rest_port = 3;
+}
+
+message WorkloadRequest {
+    string controller_name = 1;
+    string controller_ip = 2;
+    int32 controller_port = 3;
+    int32 rest_port = 4;
+    string topology_parameters = 5;
+    string topology = 6;
+    int32 hosts = 7;
+    int32 hosts_to_add = 8;
+    bool links = 9;
+    bool links_to_add = 10;
+    bool ping = 11;
+}
+
+message Host {
+    string name = 1;
+    string ip = 2;
+    string mac = 3;
+}
+
+message Switch {
+    string name = 1;
+}
+
+message Link {
+    string node1 = 1;
+    string node2 = 2;
+    int32 port1 = 3;  
+    int32 port2 = 4;  
+}
+
+message HostSwitchMapping {
+    string host_name = 1;
+    string switch_name = 2;
+}
+
+message SwitchPortMapping {
+    string switch_name = 1;
+    map<string, int32> port_map = 2;  
+}
+
+message TopologyData {
+    string message = 1;
+    bool success = 2;
+    repeated Host hosts = 3;
+    repeated Switch switches = 4;
+    repeated Link links = 5;
+    repeated HostSwitchMapping host_switch_map = 6;
+    repeated SwitchPortMapping switch_ports = 7;  
+}
+
+
+message CommandRequest {
+    string command = 1;
+}
+
+message CommandResponse {
+    string output = 1;
+    string error = 2;
+}
+
+message LinkLengthRequest {}
+
+message LinkLengthResponse {
+    int32 length = 1;
+    string error = 2;
+}
+
+
+message PingTask {
+  string src = 1;
+  string dst = 2;
+  int32 count = 3;
+}
+
+message BatchPingRequest {
+  repeated PingTask tasks = 1;
+}
+
+message BatchPingResponse {
+  repeated string results = 1;
+}
+
+message DitgSample {
+  string src = 1;
+  string dst = 2;
+  string throughput_kbps = 3;
+  string delay_ms = 4;
+  string jitter_ms = 5;
+  string loss_pct = 6;
+}
+
+message DitgResults {
+  repeated DitgSample samples = 1;
+  string raw_table = 2;   // Tabular text (header + rows), exactly what you’d like to dump to file
+}
+
+

@@ -1,0 +1,152 @@
+openapi: 3.0.0
+info:
+  version: '0'
+  title: Ryu REST API
+  description: Ryu REST API
+basePath: /v1.0/topology
+paths: 
+  /switches:
+    get:
+      summary: Get All Switches
+      description: Retrieve information about all switches in the network.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dpid:
+                      type: string
+                      format: hex
+                      description: Datapath ID of the switch
+
+  /switches/{dpid}:
+    get:
+      summary: Get Switch Details
+      description: Retrieve detailed information about a specific switch.
+      parameters:
+        - name: dpid
+          in: path
+          description: Datapath ID of the switch (in 16 hex)
+          required: true
+          schema:
+            type: string
+            format: hex
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dpid:
+                    type: string
+                    format: hex
+                    description: Datapath ID of the switch
+                  ports:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        port_no:
+                          type: integer
+                          description: Port number
+
+  /links:
+    get:
+      summary: Get All Links
+      description: Retrieve information about all links in the network.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    src:
+                      type: object
+                      description: Source of the link
+                    dst:
+                      type: object
+                      description: Destination of the link
+
+  /links/{dpid}:
+    get:
+      summary: Get Links of a Switch
+      description: Retrieve information about all links connected to a specific switch.
+      parameters:
+        - name: dpid
+          in: path
+          description: Datapath ID of the switch (in 16 hex)
+          required: true
+          schema:
+            type: string
+            format: hex
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    src_port:
+                      type: integer
+                      description: Source port of the link
+                    dst_port:
+                      type: integer
+                      description: Destination port of the link
+
+  /hosts:
+    get:
+      summary: Get All Hosts
+      description: Retrieve information about all hosts in the network.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mac:
+                      type: string
+                      description: MAC address of the host
+
+  /hosts/{dpid}:
+    get:
+      summary: Get Hosts of a Switch
+      description: Retrieve information about all hosts connected to a specific switch.
+      parameters:
+        - name: dpid
+          in: path
+          description: Datapath ID of the switch (in 16 hex)
+          required: true
+          schema:
+            type: string
+            format: hex
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mac:
+                      type: string
+                      description: MAC address of the host

@@ -1,0 +1,3498 @@
+#VER MAIS: http://193.137.203.34:8181/apidoc/explorer/index.html
+
+
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/restconf",
+  "resourcePath": null,
+  "produces": [
+    "application/json",
+    "application/xml"
+  ],
+  "apis": [
+    {
+      "path": "/config",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": null,
+          "notes": "This module defines a common base model for a collection\nof nodes in a network. Node definitions s are further used\nin network topologies and inventories.",
+          "type": "(config)ietf-network_modulePOST",
+          "nickname": "POST-ietf-network_module",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "**(config)network",
+              "description": null,
+              "required": false,
+              "type": "ietf-network(config)network-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "Describes a network.\nA network typically contains an inventory of nodes,\ntopological information (augmented through\nnetwork-topology model), as well as layering\ninformation.",
+          "type": "(config)network",
+          "nickname": "GET-network",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "Describes a network.\nA network typically contains an inventory of nodes,\ntopological information (augmented through\nnetwork-topology model), as well as layering\ninformation.",
+          "type": "ietf-network(config)network-TOP",
+          "nickname": "PUT-network",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)network",
+              "description": null,
+              "required": false,
+              "type": "ietf-network(config)network-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "Describes a network.\nA network typically contains an inventory of nodes,\ntopological information (augmented through\nnetwork-topology model), as well as layering\ninformation.",
+          "type": null,
+          "nickname": "DELETE-network",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "POST",
+          "summary": null,
+          "notes": "Describes a network.\nA network typically contains an inventory of nodes,\ntopological information (augmented through\nnetwork-topology model), as well as layering\ninformation.",
+          "type": "(config)networkPOST",
+          "nickname": "POST-network",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "**(config)network-types",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)network-types-TOP",
+              "paramType": "body"
+            },
+            {
+              "name": "**(config)supporting-network",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)supporting-network-TOP",
+              "paramType": "body"
+            },
+            {
+              "name": "**(config)node",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)node-TOP",
+              "paramType": "body"
+            },
+            {
+              "name": "**(config)link",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)link-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/network-types",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "Serves as an augmentation target.\nThe network type is indicated through corresponding\npresence containers augmented into this container.",
+          "type": "(config)network-types",
+          "nickname": "GET-network-types",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "Serves as an augmentation target.\nThe network type is indicated through corresponding\npresence containers augmented into this container.",
+          "type": "ietf-network/network(config)network-types-TOP",
+          "nickname": "PUT-network-types",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)network-types",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)network-types-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "Serves as an augmentation target.\nThe network type is indicated through corresponding\npresence containers augmented into this container.",
+          "type": null,
+          "nickname": "DELETE-network-types",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/supporting-network/{network-ref}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "An underlay network, used to represent layered network\ntopologies.",
+          "type": "(config)supporting-network",
+          "nickname": "GET-supporting-network",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "References the underlay network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "An underlay network, used to represent layered network\ntopologies.",
+          "type": "ietf-network/network(config)supporting-network-TOP",
+          "nickname": "PUT-supporting-network",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "References the underlay network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)supporting-network",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)supporting-network-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "An underlay network, used to represent layered network\ntopologies.",
+          "type": null,
+          "nickname": "DELETE-supporting-network",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "References the underlay network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/node/{node-id}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "The inventory of nodes of this network.",
+          "type": "(config)node",
+          "nickname": "GET-node",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "The inventory of nodes of this network.",
+          "type": "ietf-network/network(config)node-TOP",
+          "nickname": "PUT-node",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)node",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)node-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "The inventory of nodes of this network.",
+          "type": null,
+          "nickname": "DELETE-node",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "POST",
+          "summary": null,
+          "notes": "The inventory of nodes of this network.",
+          "type": "(config)nodePOST",
+          "nickname": "POST-node",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "**(config)supporting-node",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/node(config)supporting-node-TOP",
+              "paramType": "body"
+            },
+            {
+              "name": "**(config)termination-point",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/node(config)termination-point-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/node/{node-id}/supporting-node/{network-ref}/{node-ref}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "Represents another node, in an underlay network, that\nthis node is supported by.  Used to represent layering\nstructure.",
+          "type": "(config)supporting-node",
+          "nickname": "GET-supporting-node",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "References the underlay network that the\nunderlay node is part of.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-ref",
+              "description": "References the underlay node itself.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "Represents another node, in an underlay network, that\nthis node is supported by.  Used to represent layering\nstructure.",
+          "type": "ietf-network/network/node(config)supporting-node-TOP",
+          "nickname": "PUT-supporting-node",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "References the underlay network that the\nunderlay node is part of.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-ref",
+              "description": "References the underlay node itself.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)supporting-node",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/node(config)supporting-node-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "Represents another node, in an underlay network, that\nthis node is supported by.  Used to represent layering\nstructure.",
+          "type": null,
+          "nickname": "DELETE-supporting-node",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "References the underlay network that the\nunderlay node is part of.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-ref",
+              "description": "References the underlay node itself.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/node/{node-id}/ietf-network-topology:termination-point/{tp-id}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "A termination point can terminate a link.\nDepending on the type of topology, a termination point\ncould, for example, refer to a port or an interface.",
+          "type": "(config)termination-point",
+          "nickname": "GET-termination-point",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-id",
+              "description": "Termination point identifier.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "A termination point can terminate a link.\nDepending on the type of topology, a termination point\ncould, for example, refer to a port or an interface.",
+          "type": "ietf-network/network/node(config)termination-point-TOP",
+          "nickname": "PUT-termination-point",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-id",
+              "description": "Termination point identifier.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)termination-point",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/node(config)termination-point-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "A termination point can terminate a link.\nDepending on the type of topology, a termination point\ncould, for example, refer to a port or an interface.",
+          "type": null,
+          "nickname": "DELETE-termination-point",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-id",
+              "description": "Termination point identifier.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "POST",
+          "summary": null,
+          "notes": "A termination point can terminate a link.\nDepending on the type of topology, a termination point\ncould, for example, refer to a port or an interface.",
+          "type": "(config)termination-pointPOST",
+          "nickname": "POST-termination-point",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-id",
+              "description": "Termination point identifier.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "**(config)supporting-termination-point",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/node/termination-point(config)supporting-termination-point-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/node/{node-id}/ietf-network-topology:termination-point/{tp-id}/supporting-termination-point/{network-ref}/{node-ref}/{tp-ref}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "The leaf list identifies any termination points that\nthe termination point is dependent on, or maps onto.\nThose termination points will themselves be contained\nin a supporting node.\nThis dependency information can be inferred from\nthe dependencies between links.  For this reason,\nthis item is not separately configurable.  Hence no\ncorresponding constraint needs to be articulated.\nThe corresponding information is simply provided by the\nimplementing system.",
+          "type": "(config)supporting-termination-point",
+          "nickname": "GET-supporting-termination-point",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-id",
+              "description": "Termination point identifier.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "This leaf identifies in which topology the\nsupporting termination point is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-ref",
+              "description": "This leaf identifies in which node the supporting\ntermination point is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-ref",
+              "description": "Reference to the underlay node, must be in a\ndifferent topology",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "The leaf list identifies any termination points that\nthe termination point is dependent on, or maps onto.\nThose termination points will themselves be contained\nin a supporting node.\nThis dependency information can be inferred from\nthe dependencies between links.  For this reason,\nthis item is not separately configurable.  Hence no\ncorresponding constraint needs to be articulated.\nThe corresponding information is simply provided by the\nimplementing system.",
+          "type": "ietf-network/network/node/termination-point(config)supporting-termination-point-TOP",
+          "nickname": "PUT-supporting-termination-point",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-id",
+              "description": "Termination point identifier.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "This leaf identifies in which topology the\nsupporting termination point is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-ref",
+              "description": "This leaf identifies in which node the supporting\ntermination point is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-ref",
+              "description": "Reference to the underlay node, must be in a\ndifferent topology",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)supporting-termination-point",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/node/termination-point(config)supporting-termination-point-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "The leaf list identifies any termination points that\nthe termination point is dependent on, or maps onto.\nThose termination points will themselves be contained\nin a supporting node.\nThis dependency information can be inferred from\nthe dependencies between links.  For this reason,\nthis item is not separately configurable.  Hence no\ncorresponding constraint needs to be articulated.\nThe corresponding information is simply provided by the\nimplementing system.",
+          "type": null,
+          "nickname": "DELETE-supporting-termination-point",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-id",
+              "description": "Identifies a node uniquely within the containing\nnetwork.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-id",
+              "description": "Termination point identifier.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "This leaf identifies in which topology the\nsupporting termination point is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "node-ref",
+              "description": "This leaf identifies in which node the supporting\ntermination point is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "tp-ref",
+              "description": "Reference to the underlay node, must be in a\ndifferent topology",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/ietf-network-topology:link/{link-id}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "A Network Link connects a by Local (Source) node and\na Remote (Destination) Network Nodes via a set of the\nnodes' termination points.\nAs it is possible to have several links between the same\nsource and destination nodes, and as a link could\npotentially be re-homed between termination points, to\nensure that we would always know to distinguish between\nlinks, every link is identified by a dedicated link\nidentifier.\nNote that a link models a point-to-point link, not a\nmultipoint link.\nLayering dependencies on links in underlay topologies are\nnot represented as the layering information of nodes and of\ntermination points is sufficient.",
+          "type": "(config)link",
+          "nickname": "GET-link",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "A Network Link connects a by Local (Source) node and\na Remote (Destination) Network Nodes via a set of the\nnodes' termination points.\nAs it is possible to have several links between the same\nsource and destination nodes, and as a link could\npotentially be re-homed between termination points, to\nensure that we would always know to distinguish between\nlinks, every link is identified by a dedicated link\nidentifier.\nNote that a link models a point-to-point link, not a\nmultipoint link.\nLayering dependencies on links in underlay topologies are\nnot represented as the layering information of nodes and of\ntermination points is sufficient.",
+          "type": "ietf-network/network(config)link-TOP",
+          "nickname": "PUT-link",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)link",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network(config)link-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "A Network Link connects a by Local (Source) node and\na Remote (Destination) Network Nodes via a set of the\nnodes' termination points.\nAs it is possible to have several links between the same\nsource and destination nodes, and as a link could\npotentially be re-homed between termination points, to\nensure that we would always know to distinguish between\nlinks, every link is identified by a dedicated link\nidentifier.\nNote that a link models a point-to-point link, not a\nmultipoint link.\nLayering dependencies on links in underlay topologies are\nnot represented as the layering information of nodes and of\ntermination points is sufficient.",
+          "type": null,
+          "nickname": "DELETE-link",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "POST",
+          "summary": null,
+          "notes": "A Network Link connects a by Local (Source) node and\na Remote (Destination) Network Nodes via a set of the\nnodes' termination points.\nAs it is possible to have several links between the same\nsource and destination nodes, and as a link could\npotentially be re-homed between termination points, to\nensure that we would always know to distinguish between\nlinks, every link is identified by a dedicated link\nidentifier.\nNote that a link models a point-to-point link, not a\nmultipoint link.\nLayering dependencies on links in underlay topologies are\nnot represented as the layering information of nodes and of\ntermination points is sufficient.",
+          "type": "(config)linkPOST",
+          "nickname": "POST-link",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "**(config)source",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/link(config)source-TOP",
+              "paramType": "body"
+            },
+            {
+              "name": "**(config)destination",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/link(config)destination-TOP",
+              "paramType": "body"
+            },
+            {
+              "name": "**(config)supporting-link",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/link(config)supporting-link-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/ietf-network-topology:link/{link-id}/source",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "This container holds the logical source of a particular\nlink.",
+          "type": "(config)source",
+          "nickname": "GET-source",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "This container holds the logical source of a particular\nlink.",
+          "type": "ietf-network/network/link(config)source-TOP",
+          "nickname": "PUT-source",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)source",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/link(config)source-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "This container holds the logical source of a particular\nlink.",
+          "type": null,
+          "nickname": "DELETE-source",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/ietf-network-topology:link/{link-id}/destination",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "This container holds the logical destination of a\nparticular link.",
+          "type": "(config)destination",
+          "nickname": "GET-destination",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "This container holds the logical destination of a\nparticular link.",
+          "type": "ietf-network/network/link(config)destination-TOP",
+          "nickname": "PUT-destination",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)destination",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/link(config)destination-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "This container holds the logical destination of a\nparticular link.",
+          "type": null,
+          "nickname": "DELETE-destination",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/config/ietf-network:network/{network-id}/ietf-network-topology:link/{link-id}/supporting-link/{network-ref}/{link-ref}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "Identifies the link, or links, that this link\nis dependent on.",
+          "type": "(config)supporting-link",
+          "nickname": "GET-supporting-link",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "This leaf identifies in which underlay topology\nsupporting link is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-ref",
+              "description": "This leaf identifies a link which is a part\nof this link's underlay. Reference loops, in which\na link identifies itself as its underlay, either\ndirectly or transitively, are not allowed.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "PUT",
+          "summary": null,
+          "notes": "Identifies the link, or links, that this link\nis dependent on.",
+          "type": "ietf-network/network/link(config)supporting-link-TOP",
+          "nickname": "PUT-supporting-link",
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "This leaf identifies in which underlay topology\nsupporting link is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-ref",
+              "description": "This leaf identifies a link which is a part\nof this link's underlay. Reference loops, in which\na link identifies itself as its underlay, either\ndirectly or transitively, are not allowed.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "(config)supporting-link",
+              "description": null,
+              "required": false,
+              "type": "ietf-network/network/link(config)supporting-link-TOP",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": null
+        },
+        {
+          "method": "DELETE",
+          "summary": null,
+          "notes": "Identifies the link, or links, that this link\nis dependent on.",
+          "type": null,
+          "nickname": "DELETE-supporting-link",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-id",
+              "description": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "network-ref",
+              "description": "This leaf identifies in which underlay topology\nsupporting link is present.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "link-ref",
+              "description": "This leaf identifies a link which is a part\nof this link's underlay. Reference loops, in which\na link identifies itself as its underlay, either\ndirectly or transitively, are not allowed.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    },
+    {
+      "path": "/operational/ietf-network:network/{network-id}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": null,
+          "notes": "Describes a network.\nA network typically contains an inventory of nodes,\ntopological information (augmented through\nnetwork-topology model), as well as layering\ninformation.",
+          "type": "(operational)network",
+          "nickname": "GET-network",
+          "consumes": null,
+          "parameters": [
+            {
+              "name": "network-id",
+              "description": "Identifies a network.",
+              "required": false,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": null
+        }
+      ]
+    }
+  ],
+  "models": {
+    "_children": {
+      "unique_empty_identifier": {
+        "_children": {
+
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)ietf-network_modulePOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)ietf-network_modulePOST"
+          },
+          "properties": {
+            "_children": {
+              "network": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network(config)network"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)network-types": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)network-types"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)network-typesPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)network-typesPOST"
+          },
+          "properties": {
+            "_children": {
+
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)network-types-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:network-types": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)network-types"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Serves as an augmentation target.\nThe network type is indicated through corresponding\npresence containers augmented into this container."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)network-types-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)supporting-network": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "References the underlay network."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)supporting-network"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)supporting-networkPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)supporting-networkPOST"
+          },
+          "properties": {
+            "_children": {
+              "network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "References the underlay network."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)supporting-network-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:supporting-network": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)supporting-network"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "An underlay network, used to represent layered network\ntopologies."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)supporting-network-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/node(config)supporting-node": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "References the underlay network that the\nunderlay node is part of."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:node-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "References the underlay node itself."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/node(config)supporting-node"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)supporting-nodePOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)supporting-nodePOST"
+          },
+          "properties": {
+            "_children": {
+              "network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "References the underlay network that the\nunderlay node is part of."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "node-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "References the underlay node itself."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/node(config)supporting-node-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:supporting-node": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node(config)supporting-node"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Represents another node, in an underlay network, that\nthis node is supported by.  Used to represent layering\nstructure."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/node(config)supporting-node-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/node/termination-point(config)supporting-termination-point": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:ietf-network-topology:network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies in which topology the\nsupporting termination point is present."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:node-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies in which node the supporting\ntermination point is present."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:tp-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "Reference to the underlay node, must be in a\ndifferent topology"
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/node/termination-point(config)supporting-termination-point"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)supporting-termination-pointPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)supporting-termination-pointPOST"
+          },
+          "properties": {
+            "_children": {
+              "network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies in which topology the\nsupporting termination point is present."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "node-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies in which node the supporting\ntermination point is present."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "tp-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "Reference to the underlay node, must be in a\ndifferent topology"
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/node/termination-point(config)supporting-termination-point-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:supporting-termination-point": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node/termination-point(config)supporting-termination-point"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "The leaf list identifies any termination points that\nthe termination point is dependent on, or maps onto.\nThose termination points will themselves be contained\nin a supporting node.\nThis dependency information can be inferred from\nthe dependencies between links.  For this reason,\nthis item is not separately configurable.  Hence no\ncorresponding constraint needs to be articulated.\nThe corresponding information is simply provided by the\nimplementing system."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/node/termination-point(config)supporting-termination-point-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/node(config)termination-point": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:ietf-network-topology:tp-id": {
+                "_children": {
+                  "description": {
+                    "_value": "Termination point identifier."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:supporting-termination-point": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node/termination-point(config)supporting-termination-point"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "The leaf list identifies any termination points that\nthe termination point is dependent on, or maps onto.\nThose termination points will themselves be contained\nin a supporting node.\nThis dependency information can be inferred from\nthe dependencies between links.  For this reason,\nthis item is not separately configurable.  Hence no\ncorresponding constraint needs to be articulated.\nThe corresponding information is simply provided by the\nimplementing system."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/node(config)termination-point"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)termination-pointPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)termination-pointPOST"
+          },
+          "properties": {
+            "_children": {
+              "tp-id": {
+                "_children": {
+                  "description": {
+                    "_value": "Termination point identifier."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "supporting-termination-point": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node/termination-point(config)supporting-termination-point"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/node(config)termination-point-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:termination-point": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node(config)termination-point"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "A termination point can terminate a link.\nDepending on the type of topology, a termination point\ncould, for example, refer to a port or an interface."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/node(config)termination-point-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)node": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:node-id": {
+                "_children": {
+                  "description": {
+                    "_value": "Identifies a node uniquely within the containing\nnetwork."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:supporting-node": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node(config)supporting-node"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Represents another node, in an underlay network, that\nthis node is supported by.  Used to represent layering\nstructure."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:termination-point": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node(config)termination-point"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "A termination point can terminate a link.\nDepending on the type of topology, a termination point\ncould, for example, refer to a port or an interface."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)node"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)nodePOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)nodePOST"
+          },
+          "properties": {
+            "_children": {
+              "node-id": {
+                "_children": {
+                  "description": {
+                    "_value": "Identifies a node uniquely within the containing\nnetwork."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "supporting-node": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node(config)supporting-node"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "termination-point": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/node(config)termination-point"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)node-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:node": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)node"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "The inventory of nodes of this network."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)node-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/link(config)source": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:ietf-network-topology:source-node": {
+                "_children": {
+                  "description": {
+                    "_value": "Source node identifier, must be in same topology."
+                  },
+                  "required": {
+                    "_value": true
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:source-tp": {
+                "_children": {
+                  "description": {
+                    "_value": "Termination point within source node that terminates\nthe link."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/link(config)source"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)sourcePOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)sourcePOST"
+          },
+          "properties": {
+            "_children": {
+              "source-node": {
+                "_children": {
+                  "description": {
+                    "_value": "Source node identifier, must be in same topology."
+                  },
+                  "required": {
+                    "_value": true
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "source-tp": {
+                "_children": {
+                  "description": {
+                    "_value": "Termination point within source node that terminates\nthe link."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/link(config)source-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:source": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)source"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "This container holds the logical source of a particular\nlink."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/link(config)source-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/link(config)destination": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:ietf-network-topology:dest-node": {
+                "_children": {
+                  "description": {
+                    "_value": "Destination node identifier, must be in the same\nnetwork."
+                  },
+                  "required": {
+                    "_value": true
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:dest-tp": {
+                "_children": {
+                  "description": {
+                    "_value": "Termination point within destination node that\nterminates the link."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/link(config)destination"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)destinationPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)destinationPOST"
+          },
+          "properties": {
+            "_children": {
+              "dest-node": {
+                "_children": {
+                  "description": {
+                    "_value": "Destination node identifier, must be in the same\nnetwork."
+                  },
+                  "required": {
+                    "_value": true
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "dest-tp": {
+                "_children": {
+                  "description": {
+                    "_value": "Termination point within destination node that\nterminates the link."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/link(config)destination-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:destination": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)destination"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "This container holds the logical destination of a\nparticular link."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/link(config)destination-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/link(config)supporting-link": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:ietf-network-topology:network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies in which underlay topology\nsupporting link is present."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:link-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies a link which is a part\nof this link's underlay. Reference loops, in which\na link identifies itself as its underlay, either\ndirectly or transitively, are not allowed."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/link(config)supporting-link"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)supporting-linkPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)supporting-linkPOST"
+          },
+          "properties": {
+            "_children": {
+              "network-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies in which underlay topology\nsupporting link is present."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "link-ref": {
+                "_children": {
+                  "description": {
+                    "_value": "This leaf identifies a link which is a part\nof this link's underlay. Reference loops, in which\na link identifies itself as its underlay, either\ndirectly or transitively, are not allowed."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network/link(config)supporting-link-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:supporting-link": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)supporting-link"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Identifies the link, or links, that this link\nis dependent on."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network/link(config)supporting-link-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)link": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:ietf-network-topology:source": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)source"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "This container holds the logical source of a particular\nlink."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:destination": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)destination"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "This container holds the logical destination of a\nparticular link."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:link-id": {
+                "_children": {
+                  "description": {
+                    "_value": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:supporting-link": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)supporting-link"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Identifies the link, or links, that this link\nis dependent on."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)link"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)linkPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)linkPOST"
+          },
+          "properties": {
+            "_children": {
+              "source": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)source"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "destination": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)destination"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "link-id": {
+                "_children": {
+                  "description": {
+                    "_value": "The identifier of a link in the topology.\nA link is specific to a topology to which it belongs."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "supporting-link": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network/link(config)supporting-link"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network/network(config)link-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:link": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)link"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "A Network Link connects a by Local (Source) node and\na Remote (Destination) Network Nodes via a set of the\nnodes' termination points.\nAs it is possible to have several links between the same\nsource and destination nodes, and as a link could\npotentially be re-homed between termination points, to\nensure that we would always know to distinguish between\nlinks, every link is identified by a dedicated link\nidentifier.\nNote that a link models a point-to-point link, not a\nmultipoint link.\nLayering dependencies on links in underlay topologies are\nnot represented as the layering information of nodes and of\ntermination points is sufficient."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network/network(config)link-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network(config)network": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:network-types": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)network-types"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Serves as an augmentation target.\nThe network type is indicated through corresponding\npresence containers augmented into this container."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:network-id": {
+                "_children": {
+                  "description": {
+                    "_value": "Identifies a network."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:supporting-network": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)supporting-network"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "An underlay network, used to represent layered network\ntopologies."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:node": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)node"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "The inventory of nodes of this network."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "ietf-network:ietf-network-topology:link": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)link"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "A Network Link connects a by Local (Source) node and\na Remote (Destination) Network Nodes via a set of the\nnodes' termination points.\nAs it is possible to have several links between the same\nsource and destination nodes, and as a link could\npotentially be re-homed between termination points, to\nensure that we would always know to distinguish between\nlinks, every link is identified by a dedicated link\nidentifier.\nNote that a link models a point-to-point link, not a\nmultipoint link.\nLayering dependencies on links in underlay topologies are\nnot represented as the layering information of nodes and of\ntermination points is sufficient."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network(config)network"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "(config)networkPOST": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "id": {
+            "_value": "(config)networkPOST"
+          },
+          "properties": {
+            "_children": {
+              "network-types": {
+                "_children": {
+                  "type": {
+                    "_value": "object"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)network-types"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "network-id": {
+                "_children": {
+                  "description": {
+                    "_value": "Identifies a network."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "server-provided": {
+                "_children": {
+                  "description": {
+                    "_value": "Indicates whether the information concerning this\nparticular network is populated by the server\n(server-provided true, the general case for network\ninformation discovered from the server),\nor whether it is configured by a client\n(server-provided true, possible e.g. for\nservice overlays managed through a controller)."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "supporting-network": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)supporting-network"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "node": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)node"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              },
+              "link": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network/network(config)link"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network(config)network-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:network": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network(config)network"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Describes a network.\nA network typically contains an inventory of nodes,\ntopological information (augmented through\nnetwork-topology model), as well as layering\ninformation."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network(config)network-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network(operational)network": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:server-provided": {
+                "_children": {
+                  "description": {
+                    "_value": "Indicates whether the information concerning this\nparticular network is populated by the server\n(server-provided true, the general case for network\ninformation discovered from the server),\nor whether it is configured by a client\n(server-provided true, possible e.g. for\nservice overlays managed through a controller)."
+                  },
+                  "required": {
+                    "_value": false
+                  },
+                  "type": {
+                    "_value": "Optional.empty"
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network(operational)network"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      },
+      "ietf-network(operational)network-TOP": {
+        "_children": {
+          "$schema": {
+            "_value": "http://json-schema.org/draft-04/schema"
+          },
+          "type": {
+            "_value": "object"
+          },
+          "properties": {
+            "_children": {
+              "ietf-network:network": {
+                "_children": {
+                  "type": {
+                    "_value": "array"
+                  },
+                  "items": {
+                    "_children": {
+                      "$ref": {
+                        "_value": "ietf-network(operational)network"
+                      }
+                    },
+                    "_nodeFactory": {
+                      "_cfgBigDecimalExact": false
+                    }
+                  },
+                  "description": {
+                    "_value": "Describes a network.\nA network typically contains an inventory of nodes,\ntopological information (augmented through\nnetwork-topology model), as well as layering\ninformation."
+                  }
+                },
+                "_nodeFactory": {
+                  "_cfgBigDecimalExact": false
+                }
+              }
+            },
+            "_nodeFactory": {
+              "_cfgBigDecimalExact": false
+            }
+          },
+          "id": {
+            "_value": "ietf-network(operational)network-TOP"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        }
+      }
+    },
+    "_nodeFactory": {
+      "_cfgBigDecimalExact": false
+    }
+  }
+}

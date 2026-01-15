@@ -1,0 +1,231 @@
+Usage: sourcesonoff --version | --help | --long-help
+  or: sourcesonoff [--verbose] (-n TYPE_SRC PARAM_SRC)* 
+  or: sourcesonoff [--verbose] [-0] (--new-sources-set TYPE_SRC PARAM_SRC)*
+  or: .
+  or: TYPE_SRC ::= --receiver-tcp|--receiver-udp|--transmitter-tcp|--transmitter-udp
+  or: PARAM_SRC ::= [--destination H] [--ipv4|--ipv6] [--turns N] [--delay-starting D] [--stop-after S] DON_PARAM* DOFF_PARAM* [--port-number p] [--byte-rate b]  [--tcp-sock-opt X] [--tcp-max-conn-ign] [--tcp-max-conn-exit] [--udp-max-conn-ign] [--udp-max-conn-exit] [--udp-delay-precision P] [--internal-buffsize I] [--random-seed R]
+  or: DON_PARAM ::= [--don-type T|--don-min N|--don-max N|--don-lambda R|--don-k R|--don-avg R|--don-sigma R|--don-alpha R|--don-xm R]
+  or: DOFF_PARAM ::~ DON_PARAM
+  
+Generate and transmit network traffic and/or receive it.
+
+
+For general information:
+ sourcesonoff (--version|--help|--long-help) 
+
+For generating/receiving network traffics:
+ sourcesonoff [--verbose] (-n TYPE_SRC PARAM_SRC)* 
+
+For printing the random data generated for the Don & Doff distributions:
+ sourcesonoff [--verbose] [-0 | --dry-run] (--new-sources-set TYPE_SRC PARAM_SRC)*
+
+
+sourcesonoff works with between 1 and 1000 sources.
+Each source can be UDP (=> CBR) or TCP (=> VBR), transmitter or receiver.
+For each transmission source, two sets of N random values are generated : 
+Don & Doff. Each transmitter use random precomputed data (there is no disk
+reading during the process). Each receiver is a data bottomless pit.
+
+The source creates at most N flows, then stops to generate new flows;
+the already created flows continue to transmit their data.
+Don is a list of the length of the flow to transmit
+(Don is called "flow duration" and is in byte).
+Doff is a list of the duration before the start of the next flow
+(Doff is called "interflow duration" and is in nanosecond).
+
+PARAM_SRC are the parameters for the source, depending of its type TYPE_SRC.
+
+TYPE_SRC ::= --receiver-tcp|--receiver-udp|--transmitter-tcp|--transmitter-udp
+
+PARAM_SRC ::= [--destination (@IP_or_hostname)] [--ipv4|--ipv6]
+  [--turns (N)] [--delay-starting (delay_in_ns=0)] DON_PARAM DOFF_PARAM 
+  [--port-number (pn=9955)] [--byte-rate (_bytes)] 
+  [--tcp-sock-opt (X)] [--tcp-max-conn-ign] [--tcp-max-conn-exit]
+  [--udp-max-conn-ign] [--udp-max-conn-exit] [--udp-delay-precision (=1ms)] 
+  [--internal-buffsize (=8192 _Bytes)] [--random-seed (=0)]
+
+DON_PARAM ::= 
+  --don-type=(one-of Constant, Uniform, Exponential, Normal, Poisson, Weibull, Pareto)
+  --don-min=(minimal value for scaling, natural integer, default 0)
+  --don-max=(maximal value for scaling, positive integer, 
+    default is 1kb for Don, 100ms for Doff. Constant distribs use this value)
+  --don-lambda=(real value for exponential, Poisson & Weibull distributions)
+  --don-k=(real value for Weibull distributions)
+  --don-avg=(real value for Normal distributions)
+  --don-sigma=(real value for Normal distributions)
+  --don-alpha=(real value for Pareto distributions)
+  --don-xm=(real value for Pareto distributions)
+
+DOFF_PARAM ::= same as DON_PARAM, just replace "--don" by "--doff"
+
+NOTE ON THE INTEGER AND REAL NUMBERS FOR PARAMETERS:
+ Real values are "C-language" formatted: 1.0 6E+3 8.55E-2 ...
+ Real values are used only for don/doff: lambda, k, avg, sigma, alpha & xm.
+
+ Integer values in BYTES may be happened with a suffix k, M, G or T:
+ k=kilo (*1024), M=Mega (*1024k), G=Giga (*1024M), T=Tera (*1024G).
+ Suffix b may be used for 'bit' instead of 'Byte', 8b = 1B.
+ Suffix B is ignored (default unit).
+ 
+ Integer values for TIME duration may be suffixed with k, s, m, u, n,
+ for kiloseconds/ks (=1000s), second/sec (=1000 ms), millisecond/ms (=1000 us),
+ microsecond/us (=1000ns), nanosecond/ns (default unit).
+
+ Units are mostly in nanoseconds for temporal metrics and bytes for data.
+ For instance, a second is "1G" (because 1 Giga of nanosecond = 1 second). 
+
+ Integer may be prefixed with a "0" for octal notation and "0x" for hexadecimal.
+ For example, 0x100msec, 0400m and 256milliseconds are equivalent.
+
+DESCRIPTION OF PARAMETERS:
+  --version or -V   Print this program version informations and returns.
+
+  --verbose or -v   Increase the verbosity of this program.
+
+  --help or -h      Print the usage of this program and exits.
+
+  --long-help or -H      Print a long variante of the usage of this program and exits.
+
+  --dry-run or -0   Just print the generated distributions.
+                    Do not run the sources.
+                    If --verbose, then Values of the distribution are printed.
+
+  --new-sources-set or -n   Used to separate two different sets of sources.
+
+  --receiver-tcp or -r   The source is a TCP server, 
+                         i.e. a bottomless pit for TCP data.
+
+  --receiver-udp or -R   The source is a UDP server, 
+                         i.e. a bottomless pit for UDP data.
+
+  --transmitter-tcp or -t   The source is a TCP client, i.e. a VBR transmitter.
+                         i.e. a Variable Bit Rate (VBR) transmitter.
+
+  --transmitter-udp or -T   The source is a UDP client, i.e. a CBR transmitter.
+                         i.e. a Constant Bit Rate (CBR) transmitter.
+
+  --destination (H) or -d (H)   The source will contact the network host (H).
+
+  --delay-starting (d) or -D (d)   The source will wait (d) ns before beginning.
+
+  --stop-after (S) or -S (S)   The source will stop at most after S nanoseconds.
+    
+  --ipv4 or -4   The host (H) is an IPv4 host.
+
+  --ipv6 or -6   The host (H) is an IPv6 host.
+
+  --don-type   Type of the Distribution Don. 
+     May be "Uniform", "Exponential", "Normal" or "Gaussian", 
+     "Poisson", "Weibull", "Pareto"
+     or any abbreviation ("u", "exp", "n", "po"...).
+
+  --don-min   Minimum value for the generated random data. Used to scale the 
+              distributions to concrete and realistic "duration".
+              Units are bytes for --don, nanoseconds for --doff).
+
+  --don-max   Maximum value for the generated random data, used with --don-min.
+              A constant distribution is a distribution where all are in fact
+              this "max" value.
+
+  --don-lambda   Real value to characterize Exp, Poisson & Weibull distribs.
+
+  --don-k   Real value for the Weibull distribution.
+
+  --don-avg   Real, expected average for Normal distributions.
+ 
+  --don-sigma   Real, expected standard deviation for Normal distributions.
+
+  --don-alpha   Real value for Pareto distributions.
+
+  --don-xm   Real value for Pareto distributions.
+
+  --doff-type, --doff-min, --doff-max, --doff-lambda, --doff-k, --doff-avg,
+  --doff-sigma, --doff-alpha, --doff-xm  Refers to the previous "--don-".
+
+  --turns (N)   Number of total flows to start. Default is 10_000. Maximum is
+                999_999. Use 1_000_000 to run indefinitely: program will loop.
+
+  --port-number   TCP or UDP port number to use (enables user to easily assign 
+                  the packets to different simultaneous sources).
+
+  --byte-rate (B)  for UDP clients only, forces a constant bit rate at B bytes
+                   per second (B is at applicative level, not at IP nor UDP,
+                   so you may retrieve 20 IPv4 + 8 UDP header bytes per packet
+                   * 32 packets per second).
+
+  --udp-delay-precision for UDP clients, defines the interflow duration, in ns.
+
+  --tcp-sock-opt (X)   Activate the options (X) on the TCP socket.
+                       (see setsockopt & tcp).
+
+  --tcp-max-conn-ign (k)  If k connections are already active for the TCP source
+                         new connections will be delayed. Ignored with UDP src.
+                         A value of 0 seems no limit.
+                           
+  --tcp-max-conn-exit (k)  If k connections are already active for the TCP src
+                         new connections will stop the TCP source abruptly.
+                         A value of 0 seems no limit.
+                         
+  --udp-max-bitr-ign (k)  The UDP transmitter will never send more than k bytes.
+                          A value of 0 seems no limit.
+  
+  --udp-max-bitr-exit (k)  The UDP transmitter halts if at any time there are 
+                           more than k bytes to send to the server.
+                           A value of 0 seems no limit.    
+
+  --internal-buffsize (B)  Uses a buffer of B bytes for data transmission.
+  
+  --random-seed (R)  Set the seed to R for the pseudo-random generation fx
+
+
+
+EXAMPLES:
+  1) Print the version number and return:
+    sourcesonoff --version
+
+  2) Generate a normal distribution in the range 0..100ms for Doff, 
+  a uniform distribution in the range 10..1 GByte for Don, with 10^4 values,
+  print the result to the screen and return:
+    sourcesonoff -0 -v --doff-type=normal --don-min=10 --don-max=1G
+
+  3) or the "complete" expanded equivalent form of example 2:
+    sourcesonoff --dry-run --verbose --new-sources-set --turns=10000 
+    --doff-type=normal --doff-min=0 --doff-max=100000000 
+    --doff-avg=50000000 --doff-sigma=10000000
+    --don-type=uniform --don-min=10 --don-max=1000000000
+ 
+  4) Generate local traffic with UDP and TCP, 10 flows/each, 
+  with uniform distribs for TCP & normal distribs for UDP:
+    sourcesonoff 
+    --receiver-tcp -n --receiver-udp
+    -n --transmitter-tcp -d 127.0.0.1 --turns 10
+    -n --transmitter-udp -d 127.0.0.1 --turns 10 --don-type=norm --doff-type=n
+
+  5a) Server side: prepare for reception of TCP and UDP flows with IPv4
+    sourcesonoff --receiver-tcp -n --receiver-udp
+ 
+
+  5b) Client side: Just generate an UDP constant bitrate flow at 192 kBps 
+  for 192.168.0.1
+    sourcesonoff --transmitter-udp --byte-rate 192k --destination 192.168.0.1
+    
+    sourcesonoff --transmitter-udp --don-type=constant --don-max 6144
+    --doff-type=constant --doff-max=31250us
+    --destination 192.168.0.1 
+
+  6) Start two constant UDP sources with a duration of 5 seconds between them
+    sourcesonoff --receiver-udp
+    -n --transmitter-udp --byte-rate 192k -d localhost
+    -n --transmitter-udp --byte-rate 192k -d localhost --delay-starting 5s
+
+  7) Start an UDP source, and exit if at any time, output rate exceeds 1 Mbps
+      sourcesonoff --transmitter-udp -d 127.0.0.1 --udp-max-bitr-exit=1M
+
+  8a) On server side (2009::1), start TCP & UDP receivers for IPv6
+      sourcesonoff --receiver-tcp -6 -n --receiver-udp -6
+
+  8b) On client side, print some poisson distribution then use it
+      for generation of traffic for IPv6 host 2009::1
+      sourcesonoff --dry-run --doff-type=poisson --random-seed 5
+      sourcesonoff -t --doff-type=poisson --random-seed 5 -6 -d 2009::1
+

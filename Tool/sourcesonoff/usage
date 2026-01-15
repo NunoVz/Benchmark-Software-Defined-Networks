@@ -1,0 +1,37 @@
+Generate and transmit network traffic and/or receive it.
+
+For general information:
+ sourcesonoff (--version|--help|--long-help) 
+
+For generating/receiving network traffics:
+ sourcesonoff [--verbose] (-n TYPE_SRC PARAM_SRC)* 
+
+For printing the random data generated for the Don & Doff distributions:
+ sourcesonoff [--verbose] [-0 | --dry-run] (--new-sources-set TYPE_SRC PARAM_SRC)*
+
+
+TYPE_SRC ::= --receiver-tcp|--receiver-udp|--transmitter-tcp|--transmitter-udp
+
+PARAM_SRC ::= [--destination (@IP_or_hostname)] [--ipv4|--ipv6]
+  [--turns (N)] [--delay-starting (delay_in_ns=0)] DON_PARAM DOFF_PARAM 
+  [--port-number (pn=9955)] [--byte-rate (_bytes)] 
+  [--tcp-sock-opt (X)] [--tcp-max-conn-ign] [--tcp-max-conn-exit]
+  [--udp-max-conn-ign] [--udp-max-conn-exit] [--udp-delay-precision (=1ms)] 
+  [--internal-buffsize (=8192 _Bytes)] [--random-seed (=0)]
+
+DON_PARAM ::= 
+  --don-type=(one-of Constant, Uniform, Exponential, Normal, Poisson, Weibull, Pareto)
+  --don-min=(minimal value for scaling, natural integer, default 0)
+  --don-max=(maximal value for scaling, positive integer, 
+    default is 1kb for Don, 100ms for Doff. Constant distribs use this value)
+  --don-lambda=(real value for exponential, Poisson & Weibull distributions)
+  --don-k=(real value for Weibull distributions)
+  --don-avg=(real value for Normal distributions)
+  --don-sigma=(real value for Normal distributions)
+  --don-alpha=(real value for Pareto distributions)
+  --don-xm=(real value for Pareto distributions)
+
+DOFF_PARAM ::= same as DON_PARAM, just replace "--don" by "--doff"
+
+Use sourcesonoff --long-help for more information!
+

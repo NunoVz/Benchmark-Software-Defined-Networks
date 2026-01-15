@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDN Benchmark Tool</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+
+        <a class="nav-button" href="/folders">📁 View All Folders</a>
+    </div>
+    <div class="container">
+        <h1>SDN Benchmark Tool</h1>
+
+        <div class="form-container">
+            <h2>Benchmark Settings</h2>
+            <form id="benchmarkForm">
+                <div class="grid">
+                    <label for="controller_ip">Controller IP:</label>
+                    <input type="text" id="controller_ip" name="controller_ip" value="193.137.203.34">
+
+                    <label for="controller_port">Controller Port:</label>
+                    <input type="number" id="controller_port" name="controller_port" value="6653">
+
+                    <label for="controller_name">Controller Name:</label>
+                    <select id="controller_name" name="controller_name">
+                        <option value="onos">ONOS</option>
+                        <option value="ryu">Ryu</option>
+                        <option value="odl">ODL</option>
+                    </select>
+
+                    <label for="topology">Topology Type:</label>
+                    <select id="topology" name="topology">
+                        <option value="3-tier">3-Tier</option>
+                        <option value="star">Star</option>
+                        <option value="mesh">Mesh</option>
+                        <option value="leaf-spine">Leaf-Spine</option>
+                    </select>
+
+                    <label for="metrics">Metrics:</label>
+                    <select id="metrics" name="metrics">
+                        <option value="TDT">TDT - Topology Discovery Time</option>
+                        <option value="N">N - Northbound Metrics</option>
+                        <option value="NN">NN - Node-to-Node Reactive</option>
+                        <option value="P">P - Node-to-Controller Proactive</option>
+                        <option value="R">R - Node-to-Controller Reactive</option>
+                    </select>
+                    
+                    <label for="start">Start Size:</label>
+                    <input type="number" id="start" name="start" value="12">
+                    
+                    <label for="query_interval">Query Interval:</label>
+                    <input type="number" id="query_interval" name="query_interval" value="3">
+
+                    <label for="maxsize">Max Size:</label>
+                    <input type="number" id="maxsize" name="maxsize" value="30">
+                </div>
+
+                <button type="button" onclick="startBenchmark()">Start Benchmark</button>
+            </form>
+        </div>
+
+        <div class="logs-container">
+            <h2>Benchmark Logs</h2>
+            <div id="benchmark-log"></div>
+
+            <h2>Mininet Logs</h2>
+            <div class="mininet-cli">
+                <input type="text" id="mininet-command" value="sudo mn -c">
+                <button onclick="runMininetCommand()">Run Mininet Command</button>
+            </div>
+            <div id="mininet-log"></div>
+
+            <h2>Controller Logs</h2>
+            <button type="button" onclick="startControllerLogs()">Start Controller Logs</button>
+            <div id="controller-log"></div>
+        </div>
+
+
+    
+    </div>
+   
+    <script>
+        var socket = io.connect("http://10.3.3.114:443");
+
+        function startBenchmark() {
+            var formData = new FormData(document.getElementById("benchmarkForm"));
+            var requestData = {};
+            formData.forEach((value, key) => { requestData[key] = value; });
+
+            fetch("/start-benchmark", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => console.log(data.message))
+            .catch(error => console.error("Error:", error));
+        }
+
+        function runMininetCommand() {
+            var command = document.getElementById("mininet-command").value;
+
+            fetch("/run-mininet-command", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ command: command })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("mininet-log").innerHTML += `<p>${data.output}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        socket.on("log_update", function(data) {
+            document.getElementById("benchmark-log").innerHTML += `<p>${data.log}</p>`;
+        });
+
+        socket.on("mininet_log", function(data) {
+            document.getElementById("mininet-log").innerHTML += `<p>${data.log}</p>`;
+        });
+
+        socket.on("controller_log", function(data) {
+            document.getElementById("controller-log").innerHTML += `<p>${data.log}</p>`;
+        });
+
+        function startControllerLogs() {
+        var controllerName = document.getElementById("controller_name").value;
+        
+        fetch("/start-controller-logs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "controller_name": controllerName })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data.message))
+        .catch(error => console.error("Error:", error));
+        }
+
+        socket.on("controller_log", function(data) {
+            document.getElementById("controller-log").innerHTML += `<p>${data.log}</p>`;
+        });
+        
+    </script>
+</body>
+</html>

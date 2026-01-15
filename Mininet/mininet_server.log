@@ -1,0 +1,73 @@
+ * Exiting ovs-vswitchd (1017)
+ * Exiting ovsdb-server (759)
+WARNING: Unknown OpenFlow packet
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+WARNING: Unknown OpenFlow packet
+WARNING: more Unknown OpenFlow packet
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(
+/home/vasques/scapy-env/lib/python3.10/site-packages/scapy/sendrecv.py:479: SyntaxWarning: 'iface' has no effect on L3 I/O send(). For multicast/link-local see https://scapy.readthedocs.io/en/latest/usage.html#multicast
+  warnings.warn(

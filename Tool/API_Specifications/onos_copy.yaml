@@ -1,0 +1,320 @@
+swagger: "2.0"
+info:
+  description: ONOS Core REST API
+  version: "1.0"
+  title: ONOS Core REST API
+basePath: /onos/v1
+tags:
+  - name: docs
+    description: REST API documentation
+  - name: applications
+    description: Manage inventory of applications
+  - name: bit-error-rate
+  - name: cluster
+    description: Manage cluster of ONOS instances
+  - name: configuration
+    description: Manage component configurations
+  - name: keys
+    description: Query and Manage Device Keys
+  - name: devices
+    description: Manage inventory of infrastructure devices
+  - name: diagnostics
+    description: Provides stream of diagnostic information
+  - name: nextobjectives
+    description: Get Flow objective next list
+  - name: flowobjectives
+    description: Manage flow objectives
+  - name: flows
+    description: Query and program flow rules
+  - name: groups
+    description: Query and program group rules
+  - name: hosts
+    description: Manage inventory of end-station hosts
+  - name: intents
+    description: "Query, submit and withdraw network intents"
+  - name: links
+    description: Manage inventory of infrastructure links
+  - name: mastership
+    description: Manage the mastership of ONOS instances
+  - name: meters
+    description: Query and program meter rules
+  - name: metrics
+    description: Query metrics
+  - name: modulation
+    description: Query and program flow rules
+  - name: mcast
+    description: Manage the multicast routing information
+  - name: network/configuration
+    description: Manage network configurations
+  - name: packet/processors
+    description: Manage inventory of packet processors
+  - name: paths
+    description: Compute paths in the network graph
+  - name: regions
+    description: Manages region and device membership
+  - name: statistics
+    description: Query statistics
+  - name: system
+    description: "Provides high-level system information, version, basic sumaries, memory usage, etc"
+  - name: topology
+    description: Query network topology graph and its components
+  - name: ui/preferences
+    description: Manage user preferences
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  '/devices':
+    get:
+      tags:
+        - devices
+      summary: Gets all infrastructure devices
+      description: Returns array of all discovered infrastructure devices.
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/devices/ports':
+    get:
+      tags:
+        - devices
+      summary: Gets ports of all infrastructure devices
+      description: Returns port details of all infrastructure devices.
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/devices/{id}':
+    get:
+      tags:
+        - devices
+      summary: Gets details of infrastructure device
+      description: Returns details of the specified infrastructure device.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: device identifier
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+    delete:
+      tags:
+        - devices
+      summary: Removes infrastructure device
+      description: |-
+        Administratively deletes the specified device from the inventory of
+        known devices.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: device identifier
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/devices/{id}/ports':
+    get:
+      tags:
+        - devices
+      summary: Gets ports of infrastructure device
+      description: Returns details of the specified infrastructure device.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: device identifier
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/hosts/{id}':
+    get:
+      tags:
+        - hosts
+      summary: Get details of end-station host
+      description: Returns detailed properties of the specified end-station host.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: host identifier
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/hosts':
+    get:
+      tags:
+        - hosts
+      summary: Get all end-station hosts
+      description: Returns array of all known end-station hosts.
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+    post:
+      tags:
+        - hosts
+      summary: |-
+        Creates a new host based on JSON input and adds it to the current
+        host inventory
+      description: ""
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: stream
+          description: input JSON
+          required: true
+          schema:
+            $ref: '#/definitions/HostPut'
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/links/{usestalelinkage}':
+    get:
+      tags:
+        - links
+      summary: Get useStaleLinkAge active status
+      description: Returns current status of the VanishedStaleLink.
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+    post:
+      tags:
+        - links
+      summary: Set useStaleLinkAge status
+      description: ""
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: stream
+          description: input JSON
+          required: true
+          schema:
+            $ref: '#/definitions/VanishedLink'
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/links':
+    get:
+      tags:
+        - links
+      summary: Gets infrastructure links
+      description: "Returns array of all links, or links for the specified device or port."
+      produces:
+        - application/json
+      parameters:
+        - name: device
+          in: query
+          description: (optional) device identifier
+          required: false
+          type: string
+        - name: port
+          in: query
+          description: (optional) port number
+          required: false
+          type: string
+  '/flows/table/{tableId}':
+    get:
+      tags:
+      - flows
+      summary: Gets all flow entries for a table
+      description: Returns array of all flow rules for a table.
+      produces:
+      - application/json
+      parameters:
+      - name: tableId
+        in: path
+        description: table identifier
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+  '/applications':
+    get:
+      tags:
+      - applications
+      summary: Get all installed applications
+      description: Returns array of all installed applications.
+      parameters: []
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error
+    post:
+      tags:
+      - applications
+      summary: Install a new application
+      description: |-
+        Uploads application archive stream and optionally activates the
+        application.
+      consumes:
+      - application/octet_stream
+      produces:
+      - application/json
+      parameters:
+      - name: activate
+        in: query
+        description: true to activate app also
+        required: true
+        type: boolean
+      - in: body
+        name: stream
+        description: application archive stream
+        required: true
+      responses:
+        "200":
+          description: successful operation
+        default:
+          description: Unexpected error

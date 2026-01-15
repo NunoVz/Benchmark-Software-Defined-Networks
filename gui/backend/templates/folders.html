@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDN Benchmark Dashboard</title>
+    <style>
+        :root {
+            --bg-body: #020617;
+            --bg-surface: rgba(15, 23, 42, 0.98);
+            --border-subtle: #1f2937;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent: #38bdf8;
+            --accent-soft: rgba(56, 189, 248, 0.12);
+            --accent-strong: #0ea5e9;
+            --radius-lg: 14px;
+            --shadow-soft: 0 20px 40px rgba(0,0,0,0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top, #111827 0, transparent 55%),
+                radial-gradient(circle at bottom, #020617 0, #000 65%);
+            color: var(--text-main);
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 16px 40px;
+        }
+
+        /* HERO */
+
+        .hero {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 24px 22px 26px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #1f2937;
+            color: var(--text-muted);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .hero-pill-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+        }
+
+        .hero-main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .hero-text {
+            flex: 1 1 260px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px 0;
+            color: #f9fafb;
+            font-size: 26px;
+            letter-spacing: 0.03em;
+        }
+
+        .hero-subtitle {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            max-width: 520px;
+            line-height: 1.6;
+        }
+
+        .hero-meta {
+            flex: 1 1 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .meta-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .meta-label {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .meta-value {
+            font-weight: 500;
+            color: #e5e7eb;
+            text-align: right;
+        }
+
+        .hero-actions {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0b1120;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            box-shadow: 0 10px 26px rgba(56, 189, 248, 0.45);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 34px rgba(56, 189, 248, 0.6);
+        }
+
+        .primary-btn span.icon {
+            font-size: 16px;
+        }
+
+        .scroll-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* SECTION: CONTEXT */
+
+        .section {
+            margin-top: 22px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 18px 18px 20px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .section-kicker {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .section-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-col {
+            flex: 1 1 260px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .section-col ul {
+            margin: 6px 0 0 18px;
+            padding: 0;
+        }
+
+        .section-col li {
+            margin-bottom: 4px;
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid #1f2937;
+            background: #020617;
+            color: #e5e7eb;
+        }
+
+        /* SECTION: FOLDERS */
+
+        #folders-section {
+            scroll-margin-top: 80px;
+        }
+
+        .folders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .folders-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f9fafb;
+        }
+
+        .folders-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .folder-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 18px 0 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .folder-list li {
+            flex: 1 1 260px;
+            max-width: 320px;
+        }
+
+        .folder-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            background: var(--accent-soft);
+            color: #e0f2fe;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 10px 24px rgba(15,23,42,0.8);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+        }
+
+        .folder-link::before {
+            content: "📁";
+            font-size: 18px;
+        }
+
+        .folder-link:hover {
+            background: rgba(56, 189, 248, 0.18);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(15,23,42,1);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        footer {
+            margin-top: 18px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 720px) {
+            .hero-main {
+                flex-direction: column;
+            }
+
+            .meta-line {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .meta-value {
+                text-align: left;
+            }
+
+            .folders-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .folders-meta {
+                text-align: left;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #f87171;
+        }
+
+        .modal-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-input {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .modal-input:focus {
+            border-color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-modal {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .btn-confirm {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-confirm:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-pill">
+                <span class="hero-pill-dot"></span>
+                <span>Omega &middot; SDN Benchmarking Framework</span>
+            </div>
+
+            <div class="hero-main">
+                <div class="hero-text">
+                    <h1>Benchmark Results Dashboard</h1>
+                    <p class="hero-subtitle">
+                        Explore the outputs of automated SDN benchmarks across different controllers,
+                        topologies and fault scenarios. This interface was designed for the experimental
+                        chapter of the dissertation, keeping a minimal theme for clarity.
+                    </p>
+                </div>
+                <div class="hero-meta">
+                    <div class="meta-line">
+                        <div class="meta-label">Controllers</div>
+                        <div class="meta-value">ONOS, OpenDaylight, Ryu</div>
+                    </div>
+                    <div class="meta-line">
+                        <div class="meta-label">Topologies</div>
+                        <div class="meta-value">mesh, 3-tier, leaf-spine, star</div>
+                    </div>
+                    <div class="meta-line">
+                        <div class="meta-label">Metrics</div>
+                        <div class="meta-value">D-ITG throughput/latency, discovery, NN/NNP</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-actions">
+                <a href="#folders-section" class="primary-btn">
+                    <span class="icon">↓</span>
+                    <span>View benchmark runs</span>
+                </a>
+                <span class="scroll-hint">Scroll down to select an output folder.</span>
+            </div>
+        </header>
+
+        <!-- CONTEXT SECTION -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-title">How to read these results</div>
+                <div class="section-kicker">Each folder corresponds to one automated benchmark execution.</div>
+            </div>
+            <div class="section-grid">
+                <div class="section-col">
+                    <p>
+                        Every run is labelled by five dimensions: controller, topology, metric group,
+                        measurement mode, and scenario (e.g., baseline, malformed traffic or REST faults).
+                    </p>
+                    <ul>
+                        <li><strong>Controller</strong>: SDN control plane under test.</li>
+                        <li><strong>Topology</strong>: emulated data plane in Mininet.</li>
+                        <li><strong>Metric group</strong>: what is being measured (e.g., D-ITG).</li>
+                        <li><strong>Mode</strong>: reactive vs proactive flow installation.</li>
+                        <li><strong>Scenario</strong>: normal operation vs injected faults.</li>
+                    </ul>
+                </div>
+                <div class="section-col">
+                    <p>
+                        Inside each folder, the dashboard aggregates CSV logs and processed statistics into
+                        interactive tables and charts. These visualisations support the discussion on
+                        dependability and performance in the thesis.
+                    </p>
+                    <div class="badge-row">
+                        <span class="badge">Fully automated pipeline</span>
+                        <span class="badge">Reproducible runs</span>
+                        <span class="badge">Controller-agnostic design</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOLDERS SECTION -->
+        <section class="section" id="folders-section">
+            <div class="folders-header">
+                <div class="folders-title">Select a Benchmark Output Folder</div>
+                <a href="/merge" style="margin-left: 15px; color: var(--accent); text-decoration: none; font-weight: 600; border: 1px solid var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 11px;">
+                    + Merge Results
+                </a>
+                <a href="/compare" style="margin-left: 10px; color: #4ade80; text-decoration: none; font-weight: 600; border: 1px solid #4ade80; padding: 4px 10px; border-radius: 6px; font-size: 11px;">
+                    &#x1F4CA; Compare Scenarios
+                </a>
+            </div>
+
+            {% set total_folders = categorized_folders.Proactive|length + categorized_folders.Reactive|length + categorized_folders.Other|length %}
+
+            {% if total_folders > 0 %}
+                {% for category, folders in categorized_folders.items() %}
+                    {% if folders %}
+                        <div style="margin-top: 25px;">
+                            <h3 style="color: #9ca3af; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 18px;">{{ category }}</h3>
+                            <ul class="folder-list" style="justify-content: flex-start;">
+                                {% for folder in folders %}
+                                    <li style="background: var(--accent-soft); border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.35); overflow: hidden; display: flex; flex-direction: column;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 10px 18px;">
+                                            <a class="folder-link" href="/results/{{ folder.name }}" style="all: unset; cursor: pointer; text-decoration: none; color: #e0f2fe; font-size: 15px; font-weight: 500;">
+                                                {{ folder.name }}
+                                            </a>
+                                            {% if folder.date %}
+                                                <span style="font-size: 11px; color: #9ca3af; flex-shrink: 0; margin-left: 10px;">{{ folder.date }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div style="padding: 0 18px 14px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(56, 189, 248, 0.1);">
+                                            <div style="display: flex; gap: 12px; align-items: center;">
+                                                {% if folder.is_merged %}
+                                                    <span style="font-size: 11px; color: #a78bfa; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
+                                                        <span style="width: 8px; height: 8px; background: #a78bfa; border-radius: 50%; box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);"></span> 
+                                                        Merged {% if folder.merge_count > 0 %}(N={{ folder.merge_count }}){% endif %}
+                                                    </span>
+                                                {% endif %}
+
+                                                {% if folder.processed %}
+                                                    <span style="font-size: 11px; color: #4ade80; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
+                                                        <span style="width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);"></span> Processed
+                                                    </span>
+                                                {% else %}
+                                                     {% if folder.name != 'Output_Realtime' and not folder.is_merged %}
+                                                        <span style="font-size: 11px; color: #f87171; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
+                                                            <span style="width: 8px; height: 8px; background: #f87171; border-radius: 50%;"></span> Not Processed
+                                                        </span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <div style="display: flex; align-items: center;">
+                                                {% if folder.name != 'Output_Realtime' and not folder.is_merged %}
+                                                <button onclick="runAnalysis('{{ folder.name }}')" style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-subtle); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; transition: all 0.2s;">
+                                                    Run Analysis
+                                                </button>
+                                                {% endif %}
+                                                <button onclick="deleteFolder('{{ folder.name }}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; transition: all 0.2s; margin-left: 8px;">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                 <p class="empty-message">
+                    No folders detected. Run the benchmark pipeline to generate new outputs.
+                </p>
+            {% endif %}
+        </section>
+
+        <footer>
+            Omega SDN Benchmark &middot; Experimental interface for the M.Sc. dissertation.
+        </footer>
+    </div>
+
+    <!-- Custom Delete Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">Delete Folder</h3>
+            <p class="modal-text" id="deleteModalText">Are you sure you want to permanently delete this folder?</p>
+            <input type="password" id="deletePassword" class="modal-input" placeholder="Enter admin password">
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-modal btn-confirm" id="confirmDeleteBtn">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function runAnalysis(folderName) {
+        if(!confirm("Run analysis for " + folderName + "? This may take a moment.")) return;
+
+        const btn = event.target;
+        btn.innerText = "Running...";
+        btn.disabled = true;
+
+        fetch('/run-analysis', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ folder: folderName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); 
+            } else {
+                alert("Error: " + data.error);
+                btn.innerText = "Run Analysis";
+                btn.disabled = false;
+            }
+        })
+        .catch(err => {
+            alert("Request failed: " + err);
+            btn.innerText = "Run Analysis";
+            btn.disabled = false;
+        });
+    }
+
+    let folderToDelete = null;
+
+    function deleteFolder(folderName) {
+        folderToDelete = folderName;
+        document.getElementById('deleteModalText').innerText = `Are you sure you want to PERMANENTLY DELETE '${folderName}'? This cannot be undone.`;
+        document.getElementById('deletePassword').value = '';
+        document.getElementById('deleteModal').classList.add('active');
+        setTimeout(() => document.getElementById('deletePassword').focus(), 100);
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('active');
+        folderToDelete = null;
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        if (!folderToDelete) return;
+        
+        const password = document.getElementById('deletePassword').value;
+        if (!password) {
+            alert("Please enter the password.");
+            return;
+        }
+
+        const btn = this;
+        const originalText = btn.innerText;
+        btn.innerText = "Deleting...";
+        btn.disabled = true;
+
+        fetch('/delete-folder', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ folder: folderToDelete, password: password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Error: " + data.error);
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(err => {
+            alert("Request failed: " + err);
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+    });
+    </script>
+</body>
+</html>

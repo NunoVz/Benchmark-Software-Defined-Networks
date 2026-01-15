@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison View</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-body: #020617;
+            --bg-surface: rgba(15, 23, 42, 0.98);
+            --border-subtle: #1f2937;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent: #38bdf8;
+            --accent-soft: rgba(56, 189, 248, 0.12);
+            --accent-strong: #0ea5e9;
+            --radius-lg: 14px;
+            --shadow-soft: 0 20px 40px rgba(0,0,0,0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top, #111827 0, transparent 55%),
+                radial-gradient(circle at bottom, #020617 0, #000 65%);
+            color: var(--text-main);
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 16px 40px;
+        }
+
+        .section {
+            margin-top: 22px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 24px 28px 30px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-soft);
+        }
+
+        h1 {
+            color: #f9fafb;
+            font-size: 26px;
+            letter-spacing: 0.03em;
+        }
+        
+        h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f9fafb;
+            margin-bottom: 4px;
+        }
+
+        a.back-link {
+            display: inline-block;
+            padding: 8px 18px;
+            background: transparent;
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.16s ease;
+        }
+
+        a.back-link:hover {
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .filter-group select {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group select:focus {
+            border-color: var(--accent);
+        }
+        
+        .d-none {
+            display: none;
+        }
+
+        .scenario-group {
+            margin-top: 28px;
+        }
+
+        .scenario-group legend {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .scenario-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .scenario-options .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #0f172a;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .scenario-options .form-check:hover {
+            border-color: var(--accent);
+        }
+
+        .scenario-options .form-check input {
+            cursor: pointer;
+        }
+
+        .scenario-options .form-check label {
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .chart-container {
+            margin-top: 14px;
+            background: #020617;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #111827;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Summary Table Styles */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        .summary-table th {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+        .summary-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(31, 41, 55, 0.5);
+            color: var(--text-main);
+        }
+        .diff-negative { color: #f87171; } /* Red for bad drop/increase */
+        .diff-positive { color: #4ade80; } /* Green for good */
+        .diff-neutral { color: var(--text-muted); }
+
+        .action-btn {
+            padding: 6px 14px;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            background: rgba(56, 189, 248, 0.12);
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h1>Comparison View</h1>
+            <a href="/" class="back-link">Back to Main View</a>
+        </div>
+        <p style="color: var(--text-muted);">This view allows you to compare different scenarios (e.g., attacks vs. baseline) on a single graph.</p>
+        
+        <div class="section">
+            <h2>1. Select Data Folder</h2>
+            <div class="filter-group" style="margin-top: 16px; display: flex; align-items: center; gap: 20px;">
+                <select id="folderSelector">
+                    <option selected>Choose a folder to analyze...</option>
+                    {% for folder in folders %}
+                        <option value="{{ folder.name }}">{{ folder.name }}</option>
+                    {% endfor %}
+                </select>
+                <div id="folderMetaInfo" style="display:none;"></div>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="compareDetailsCheck"> 
+                    Show Min/Max/StdDev
+                </label>
+            </div>
+
+            <div id="filters" class="d-none">
+                <h2 style="margin-top: 28px;">2. Define Comparison Group</h2>
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label for="controllerSelector">Controller</label>
+                        <select id="controllerSelector"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="topologySelector">Topology</label>
+                        <select id="topologySelector"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="metricSelector">Metric Group</label>
+                        <select id="metricSelector"></select>
+                    </div>
+                </div>
+
+                <div class="scenario-group">
+                    <legend>3. Select Scenarios to Compare</legend>
+                    <div id="scenarioSelector" class="scenario-options">
+                        <!-- Checkboxes will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="margin: 0;">Comparison Graph</h2>
+                <div>
+                    <a href="/thesis_view" class="action-btn" style="margin-right: 10px; text-decoration: none; display: inline-block; vertical-align: middle;">Thesis Grid View</a>
+                    <button id="batchExportBtn" onclick="batchExport()" class="action-btn" style="margin-right: 10px; border-color: #4ade80; color: #4ade80;">Batch Export All (Thesis)</button>
+                    <button onclick="exportComparisonChart()" class="action-btn">Export as PDF</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+            <div id="summaryTableContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+        let comparisonChart = null;
+
+        const folderSelector = document.getElementById('folderSelector');
+        const detailsCheck = document.getElementById('compareDetailsCheck');
+        const filtersDiv = document.getElementById('filters');
+        const controllerSelector = document.getElementById('controllerSelector');
+        const topologySelector = document.getElementById('topologySelector');
+        const metricSelector = document.getElementById('metricSelector');
+        const scenarioSelector = document.getElementById('scenarioSelector');
+        const chartCanvas = document.getElementById('comparisonChart');
+
+        // Plugin to draw error bars (Std Dev)
+        const errorBarPlugin = {
+            id: 'errorBarPlugin',
+            afterDatasetsDraw: (chart) => {
+                const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(left, top, width, height);
+                ctx.clip();
+
+                chart.data.datasets.forEach((dataset, i) => {
+                    if (dataset.errorBars) {
+                        const meta = chart.getDatasetMeta(i);
+                        if(meta.hidden) return; 
+                        
+                        meta.data.forEach((element, index) => {
+                            const { x } = element;
+                            const bars = dataset.errorBars[index];
+                            if (!bars || bars.min === null || bars.max === null) return;
+
+                            const scale = chart.scales.y;
+                            const yMin = scale.getPixelForValue(Math.max(0, bars.min));
+                            const yMax = scale.getPixelForValue(bars.max);
+
+                            ctx.save();
+                            ctx.strokeStyle = dataset.borderColor;
+                            ctx.lineWidth = 2.5;
+                            
+                            // Vertical Line
+                            ctx.beginPath();
+                            ctx.moveTo(x, yMin);
+                            ctx.lineTo(x, yMax);
+                            ctx.stroke();
+
+                            // Caps
+                            const capWidth = 5;
+                            ctx.beginPath();
+                            ctx.moveTo(x - capWidth, yMin);
+                            ctx.lineTo(x + capWidth, yMin);
+                            ctx.moveTo(x - capWidth, yMax);
+                            ctx.lineTo(x + capWidth, yMax);
+                            ctx.stroke();
+                            
+                            ctx.restore();
+                        });
+                    }
+                });
+                ctx.restore();
+            }
+        };
+
+        async function loadData() {
+            const folder = folderSelector.value;
+            const details = detailsCheck.checked;
+
+            if (!folder || folder.startsWith('Choose')) {
+                filtersDiv.classList.add('d-none');
+                return;
+            }
+            
+            const response = await fetch(`/api/comparison_data/${folder}?details=${details}`);
+            const jsonResponse = await response.json();
+            
+            let rawData = [];
+            let meta = {};
+
+            // Handle new API structure { data: [...], meta: {...} }
+            if (Array.isArray(jsonResponse)) {
+                rawData = jsonResponse;
+            } else {
+                rawData = jsonResponse.data;
+                meta = jsonResponse.meta;
+            }
+
+            // Display Sample Size if merged
+            const metaDiv = document.getElementById('folderMetaInfo');
+            if (metaDiv) {
+                if (meta && meta.is_merged && meta.merge_count > 0) {
+                    metaDiv.innerHTML = `<span style="color: #a78bfa; font-size: 13px; font-weight: 600; background: rgba(167, 139, 250, 0.1); padding: 4px 10px; border-radius: 99px; border: 1px solid rgba(167, 139, 250, 0.3);">Merged Dataset (N=${meta.merge_count})</span>`;
+                    metaDiv.style.display = 'block';
+                } else {
+                    metaDiv.style.display = 'none';
+                }
+            }
+
+            allData = [];
+            rawData.forEach(item => {
+                const keys = item.data.length > 0 ? Object.keys(item.data[0]) : [];
+                const potentialXKeys = ['switches', 'num_switches', 'Switchers', 'Threads', 'hosts'];
+                const xKey = potentialXKeys.find(key => keys.includes(key)) || keys[0];
+
+                if (item.metric.toUpperCase().includes("D-ITG")) {
+                    let thrKey = keys.find(k => (k.toLowerCase().includes('throughput') || k.toLowerCase().includes('thr')) && (k.toLowerCase().includes('avg') || k.toLowerCase().includes('average')));
+                    if (!thrKey) thrKey = keys.find(k => k.toLowerCase().includes('throughput') || k.toLowerCase().includes('thr'));
+
+                    let delayKey = keys.find(k => (k.toLowerCase().includes('delay') || k.toLowerCase().includes('latency')) && (k.toLowerCase().includes('avg') || k.toLowerCase().includes('average')));
+                    if (!delayKey) delayKey = keys.find(k => k.toLowerCase().includes('delay') || k.toLowerCase().includes('latency'));
+
+                    if (thrKey) {
+                        allData.push({ ...item, metric: "D-ITG (Throughput)", selectedY: thrKey });
+                    }
+                    if (delayKey) {
+                        allData.push({ ...item, metric: "D-ITG (Average Delay)", selectedY: delayKey });
+                    }
+                    if (!thrKey && !delayKey) allData.push(item);
+                } else {
+                    const preferredYKeys = ['Throughput', 'tp', 'thr', 'rtt', 'latency', 'jitter', 'loss', 'time', 'delay', 'value'];
+                    let yKey = null;
+                    for (const p of preferredYKeys) {
+                        // Prioritize Average values
+                        yKey = keys.find(k => k.toLowerCase().includes(p.toLowerCase()) && (k.toLowerCase().includes('avg') || k.toLowerCase().includes('average')) && k !== xKey && !k.endsWith('_min') && !k.endsWith('_max'));
+                        if (!yKey) {
+                            yKey = keys.find(k => k.toLowerCase().includes(p.toLowerCase()) && k !== xKey && !k.endsWith('_min') && !k.endsWith('_max'));
+                        }
+                        if (yKey) break;
+                    }
+                    if (!yKey) yKey = keys.find(k => typeof item.data[0][k] === 'number' && k !== xKey && !k.endsWith('_min') && !k.endsWith('_max'));
+                    allData.push({ ...item, selectedY: yKey });
+                }
+            });
+
+            populateFilters();
+            filtersDiv.classList.remove('d-none');
+        }
+
+        folderSelector.addEventListener('change', loadData);
+        detailsCheck.addEventListener('change', loadData);
+
+        function populateFilters() {
+            const controllers = [...new Set(allData.map(d => d.controller))]
+                .filter(c => c !== 'UNKNOWN')
+                .sort();
+            const topologies = [...new Set(allData.map(d => d.topology))]
+                .filter(t => t !== 'UNKNOWN')
+                .sort();
+            const metrics = [...new Set(allData.map(d => d.metric))].sort();
+
+            populateSelect(controllerSelector, controllers, false);
+            populateSelect(topologySelector, topologies, false);
+            populateSelect(metricSelector, metrics, false); // No "All" for metrics
+
+            // Trigger change to select first metric by default and update scenarios
+            metricSelector.dispatchEvent(new Event('change'));
+        }
+
+        function populateSelect(selectElement, options, allowAll = true) {
+            selectElement.innerHTML = ''; // Clear previous options
+            if (allowAll) {
+                selectElement.innerHTML = '<option selected>All</option>';
+            }
+            options.forEach((opt, index) => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                // Select the first item if "All" is not allowed
+                if (!allowAll && index === 0) {
+                    option.selected = true;
+                }
+                selectElement.appendChild(option);
+            });
+        }
+        
+        controllerSelector.addEventListener('change', updateScenarioCheckboxes);
+        topologySelector.addEventListener('change', updateScenarioCheckboxes);
+        metricSelector.addEventListener('change', updateScenarioCheckboxes);
+
+        function getFilteredData() {
+            const selectedController = controllerSelector.value;
+            const selectedTopology = topologySelector.value;
+            const selectedMetric = metricSelector.value;
+
+            return allData.filter(d => 
+                (selectedController === 'All' || d.controller === selectedController) &&
+                (selectedTopology === 'All' || d.topology === selectedTopology) &&
+                (d.metric === selectedMetric) // Metric must always match
+            );
+        }
+
+        function updateYAxisSelector() {
+            const selectedMetric = metricSelector.value;
+            const filtered = allData.filter(d => d.metric === selectedMetric);
+            if (filtered.length === 0) return;
+
+            const reference = filtered[0];
+            if (!reference.data || reference.data.length === 0) return;
+
+            const keys = Object.keys(reference.data[0]);
+            const potentialXKeys = ['switches', 'num_switches', 'Switchers', 'Threads', 'hosts'];
+            const xKey = potentialXKeys.find(key => keys.includes(key)) || keys[0];
+
+            const yKeys = keys.filter(k => 
+                k !== xKey && 
+                !k.endsWith('_min') && 
+                !k.endsWith('_max') &&
+                typeof reference.data[0][k] === 'number'
+            );
+
+            populateSelect(yAxisSelector, yKeys, false);
+        }
+
+        function updateScenarioCheckboxes() {
+            // Store previously selected scenarios
+            const previouslySelected = Array.from(scenarioSelector.querySelectorAll('input:checked')).map(cb => cb.value);
+
+            const filteredData = getFilteredData();
+            const scenarios = [...new Set(filteredData.map(d => d.scenario))];
+            
+            scenarioSelector.innerHTML = '';
+            scenarios.sort(); 
+
+            scenarios.forEach(scenario => {
+                const div = document.createElement('div');
+                div.className = 'form-check';
+                div.innerHTML = `
+                    <input class="form-check-input" type="checkbox" id="scenario-${scenario}" value="${scenario}">
+                    <label for="scenario-${scenario}">${scenario}</label>
+                `;
+                scenarioSelector.appendChild(div);
+            });
+
+            // Restore previously selected scenarios
+            previouslySelected.forEach(scenarioValue => {
+                const newCheckbox = document.getElementById(`scenario-${scenarioValue}`);
+                if (newCheckbox) {
+                    newCheckbox.checked = true;
+                }
+            });
+
+            scenarioSelector.querySelectorAll('input').forEach(input => {
+                input.addEventListener('change', updateChart);
+            });
+
+            updateChart();
+        }
+
+        // Helper to assign semantic colors
+        function getScenarioColor(scenario, index) {
+            const s = scenario.toLowerCase();
+            if (s.includes('baseline') || s.includes('traffic')) return '#4ade80'; // Green
+            if (s.includes('dos')) return '#ef4444';       // Red
+            if (s.includes('slowloris')) return '#f97316'; // Orange
+            if (s.includes('malformed')) return '#a855f7'; // Purple
+            if (s.includes('rest')) return '#3b82f6';      // Blue
+            // Fallback palette
+            const palette = ['#38bdf8', '#fbbf24', '#f472b6', '#60a5fa'];
+            return palette[index % palette.length];
+        }
+
+        function updateChart() {
+            const selectedScenarios = Array.from(scenarioSelector.querySelectorAll('input:checked')).map(cb => cb.value);
+            const filteredData = getFilteredData();
+
+            let rawChartData = filteredData.filter(d => selectedScenarios.includes(d.scenario));
+            
+            // --- DEDUPLICATION LOGIC ---
+            // Agrupa por cenário e mantém apenas a entrada com mais colunas (dados mais completos)
+            // Isto resolve o problema de ter ficheiros parciais (_avg, _max) a criar linhas duplicadas
+            const scenarioMap = new Map();
+            rawChartData.forEach(item => {
+                if (!scenarioMap.has(item.scenario)) {
+                    scenarioMap.set(item.scenario, item);
+                } else {
+                    const existing = scenarioMap.get(item.scenario);
+                    const existingCols = existing.data.length > 0 ? Object.keys(existing.data[0]).length : 0;
+                    const newCols = item.data.length > 0 ? Object.keys(item.data[0]).length : 0;
+                    
+                    if (newCols > existingCols) {
+                        scenarioMap.set(item.scenario, item);
+                    }
+                }
+            });
+            const chartData = Array.from(scenarioMap.values());
+
+            if (comparisonChart) {
+                comparisonChart.destroy();
+            }
+
+            if (chartData.length === 0) return;
+
+            // --- Smarter Axis Key Determination ---
+            // Find a reference scenario (prefer baseline) to determine axis keys and titles
+            const reference = chartData.find(d => d.scenario.toLowerCase().includes('baseline') || d.scenario.toLowerCase().includes('traffic')) || chartData[0];
+
+            let xKey = 'num_switches';
+            if (reference.data.length > 0) {
+                 const potentialXKeys = ['num_switches', 'switches', 'Switchers', 'Threads', 'hosts'];
+                 const firstRowKeys = Object.keys(reference.data[0]);
+                 const foundXKey = potentialXKeys.find(key => firstRowKeys.includes(key));
+                 xKey = foundXKey || firstRowKeys[0];
+            }
+
+            let yKey = reference.selectedY;
+            
+            if(!yKey && reference.data.length > 0) {
+                const firstRowKeys = Object.keys(reference.data[0]);
+                const preferredYKeys = ['Throughput', 'rtt', 'latency', 'jitter', 'loss', 'time', 'delay', 'value'];
+                
+                for (const pKey of preferredYKeys) {
+                    // Prioritize Average values
+                    let foundKey = firstRowKeys.find(k => k.toLowerCase().includes(pKey.toLowerCase()) && (k.toLowerCase().includes('avg') || k.toLowerCase().includes('average')));
+                    if (!foundKey) {
+                        foundKey = firstRowKeys.find(k => k.toLowerCase().includes(pKey.toLowerCase()));
+                    }
+                    if (foundKey && foundKey !== xKey && !foundKey.endsWith('_min') && !foundKey.endsWith('_max')) {
+                        yKey = foundKey;
+                        break;
+                    }
+                }
+
+                if (!yKey) {
+                    yKey = firstRowKeys.find(key => 
+                        typeof reference.data[0][key] === 'number' && 
+                        key !== xKey &&
+                        !key.endsWith('_min') &&
+                        !key.endsWith('_max')
+                    );
+                }
+            }
+            
+            if(!yKey) {
+                console.warn("Could not determine a suitable Y-axis key.");
+                return;
+            }
+
+            const labels = [...new Set(chartData.flatMap(d => d.data.map(row => row[xKey])))].sort((a,b) => a-b);
+
+            const datasets = chartData.map((scenarioData, index) => {
+                const dataPoints = labels.map(label => {
+                    const row = scenarioData.data.find(r => r[xKey] === label);
+                    return row ? row[yKey] : null;
+                });
+
+                // Extract error bars if available (for merged folders)
+                const errorBars = labels.map(label => {
+                    const row = scenarioData.data.find(r => r[xKey] === label);
+                    if (!row) return null;
+                    
+                    // Backend sends _min and _max columns for merged data
+                    const minVal = row[yKey + "_min"];
+                    const maxVal = row[yKey + "_max"];
+                    
+                    if (minVal !== undefined && maxVal !== undefined) {
+                        return { min: minVal, max: maxVal };
+                    }
+                    return null;
+                });
+
+                const color = getScenarioColor(scenarioData.scenario, index);
+                return {
+                    label: scenarioData.scenario,
+                    data: dataPoints,
+                    borderColor: color,
+                    backgroundColor: color,
+                    tension: 0.1,
+                    fill: false,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    errorBars: errorBars // Attach error data
+                }
+            });
+
+            // Determine Y-Axis Title with Units
+            let yTitle = yKey;
+            const unitMatch = yKey.match(/\((.*?)\)$/);
+            if (unitMatch) {
+                const unit = unitMatch[1];
+                if (['s', 'ms', 'us'].includes(unit)) {
+                    yTitle = `Time (${unit})`;
+                } else if (unit === '%') {
+                    yTitle = `Percentage (%)`;
+                } else if (unit.includes('bps')) {
+                    yTitle = `Throughput (${unit})`;
+                } else if (unit.includes('req/s') || unit.includes('pps') || unit.includes('responses/s')) {
+                    yTitle = `Rate (${unit})`;
+                }
+            }
+            const chartTitle = `${yTitle} vs ${xKey}`;
+
+            // Calculate min/max including error bars for auto-scaling
+            let yMin = Infinity, yMax = -Infinity;
+            datasets.forEach(d => {
+                d.data.forEach(v => {
+                    if (v !== null && v !== undefined && !isNaN(v)) {
+                        yMin = Math.min(yMin, v);
+                        yMax = Math.max(yMax, v);
+                    }
+                });
+                if (d.errorBars) {
+                    d.errorBars.forEach(eb => {
+                        if (eb) {
+                            if (eb.min !== null && !isNaN(eb.min)) yMin = Math.min(yMin, eb.min);
+                            if (eb.max !== null && !isNaN(eb.max)) yMax = Math.max(yMax, eb.max);
+                        }
+                    });
+                }
+            });
+
+            const range = (yMax !== -Infinity && yMin !== Infinity) ? yMax - yMin : 0;
+            const padding = range === 0 ? (yMax === 0 ? 1 : Math.abs(yMax) * 0.1) : range * 0.05;
+            const suggestedMin = (yMin !== Infinity) ? Math.max(0, yMin - padding) : undefined;
+            const suggestedMax = (yMax !== -Infinity) ? yMax + padding : undefined;
+
+            comparisonChart = new Chart(chartCanvas, {
+                type: 'line',
+                plugins: [errorBarPlugin],
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        zoom: {
+                            limits: {
+                                y: { min: 0 }
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'xy'
+                            },
+                            zoom: {
+                                wheel: { enabled: true, speed: 0.05 },
+                                pinch: { enabled: true },
+                                mode: 'xy'
+                            }
+                        },
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: { 
+                                color: '#9ca3af',
+                                boxWidth: 8,
+                                font: { size: 14 }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: chartTitle,
+                            color: '#e5e7eb', // Hardcoded hex value
+                            font: { size: 20 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            offset: true,
+                            title: { display: true, text: xKey, color: '#9ca3af', font: { size: 16 } },
+                            ticks: { color: '#9ca3af', font: { size: 14 } },
+                            grid: { color: '#1f2937' } // Hardcoded hex value
+                        },
+                        y: {
+                            title: { display: true, text: yTitle, color: '#9ca3af', font: { size: 16 } },
+                            ticks: { color: '#9ca3af', font: { size: 14 } },
+                            grid: { color: '#1f2937' }, // Hardcoded hex value
+                            suggestedMin: suggestedMin,
+                            suggestedMax: suggestedMax
+                        }
+                    }
+                }
+            });
+
+            generateSummaryTable(chartData, yKey, xKey);
+        }
+
+        function exportComparisonChart() {
+            if (!comparisonChart) return;
+            
+            const ctrl = controllerSelector.value;
+            const topo = topologySelector.value;
+            const metric = metricSelector.value;
+            const selectedScenarios = Array.from(scenarioSelector.querySelectorAll('input:checked')).map(cb => cb.value);
+            
+            let fileName = `${ctrl}_${topo}_${metric}`;
+            if (selectedScenarios.length > 0) {
+                fileName += `_${selectedScenarios.join('-')}`;
+            }
+            
+            // Sanitize filename
+            fileName = fileName.replace(/[^a-z0-9_\-]/gi, '_');
+            
+            exportChart(comparisonChart, fileName);
+        }
+
+        function exportChart(chart, fileName) {
+            // 1. Save original options
+            const originalOptions = {
+                devicePixelRatio: chart.options.devicePixelRatio,
+                scales: {
+                    x: { 
+                        ticks: { 
+                            color: chart.options.scales.x.ticks.color,
+                            font: { ...chart.options.scales.x.ticks.font }
+                        },
+                        grid: { 
+                            color: chart.options.scales.x.grid.color,
+                            display: chart.options.scales.x.grid.display
+                        },
+                        title: { 
+                            color: chart.options.scales.x.title.color,
+                            font: { ...chart.options.scales.x.title.font }
+                        }
+                    },
+                    y: {
+                        ticks: { 
+                            color: chart.options.scales.y.ticks.color,
+                            font: { ...chart.options.scales.y.ticks.font }
+                        },
+                        grid: { color: chart.options.scales.y.grid.color },
+                        title: { 
+                            color: chart.options.scales.y.title.color,
+                            font: { ...chart.options.scales.y.title.font }
+                        }
+                    }
+                },
+                plugins: {
+                    title: { color: chart.options.plugins.title ? chart.options.plugins.title.color : null },
+                    legend: { 
+                        labels: { 
+                            color: chart.options.plugins.legend.labels.color,
+                            font: { ...chart.options.plugins.legend.labels.font }
+                        } 
+                    }
+                }
+            };
+
+            // 2. Apply "Thesis" Theme (White bg, Black text)
+            const black = '#000000';
+            const lightGray = '#d1d5db';
+
+            chart.options.devicePixelRatio = 3; // High resolution for export
+            // Update Axes
+            chart.options.scales.x.ticks.color = black;
+            chart.options.scales.x.ticks.font = { size: 16 };
+            chart.options.scales.x.title.color = black;
+            chart.options.scales.x.title.font = { size: 18, weight: 'bold' };
+            chart.options.scales.x.grid.display = false;
+
+            chart.options.scales.y.ticks.color = black;
+            chart.options.scales.y.ticks.font = { size: 16 };
+            chart.options.scales.y.title.color = black;
+            chart.options.scales.y.title.font = { size: 18, weight: 'bold' };
+            chart.options.scales.y.grid.color = lightGray;
+
+            // Update Legend & Title
+            if (chart.options.plugins.title) chart.options.plugins.title.color = black;
+            if (chart.options.plugins.legend) {
+                chart.options.plugins.legend.labels.color = black;
+                chart.options.plugins.legend.labels.font = { size: 14 };
+            }
+
+            // 3. Add White Background Plugin
+            const whiteBgPlugin = {
+                id: 'whiteBg',
+                beforeDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'destination-over';
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, chart.width, chart.height);
+                    ctx.restore();
+                }
+            };
+            chart.config.plugins.push(whiteBgPlugin);
+
+            // 4. Update Chart (no animation)
+            chart.update('none');
+
+            // 5. Download as PDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: chart.width > chart.height ? 'l' : 'p',
+                unit: 'px',
+                format: [chart.width, chart.height]
+            });
+            pdf.addImage(chart.toBase64Image('image/png', 1.0), 'PNG', 0, 0, chart.width, chart.height);
+            pdf.save((fileName || 'chart') + '.pdf');
+
+            // 6. Revert Changes
+            chart.config.plugins = chart.config.plugins.filter(p => p.id !== 'whiteBg');
+            chart.options.devicePixelRatio = originalOptions.devicePixelRatio;
+            
+            chart.options.scales.x.ticks.color = originalOptions.scales.x.ticks.color;
+            chart.options.scales.x.grid.display = originalOptions.scales.x.grid.display;
+            chart.options.scales.x.grid.color = originalOptions.scales.x.grid.color;
+            chart.options.scales.x.title.color = originalOptions.scales.x.title.color;
+            chart.options.scales.x.ticks.font = originalOptions.scales.x.ticks.font;
+            chart.options.scales.x.title.font = originalOptions.scales.x.title.font;
+
+            chart.options.scales.y.ticks.color = originalOptions.scales.y.ticks.color;
+            chart.options.scales.y.grid.color = originalOptions.scales.y.grid.color;
+            chart.options.scales.y.title.color = originalOptions.scales.y.title.color;
+            chart.options.scales.y.ticks.font = originalOptions.scales.y.ticks.font;
+            chart.options.scales.y.title.font = originalOptions.scales.y.title.font;
+
+            if (chart.options.plugins.title) chart.options.plugins.title.color = originalOptions.plugins.title.color;
+            if (chart.options.plugins.legend) {
+                chart.options.plugins.legend.labels.color = originalOptions.plugins.legend.labels.color;
+                chart.options.plugins.legend.labels.font = originalOptions.plugins.legend.labels.font;
+            }
+
+            chart.update('none');
+        }
+
+        async function batchExport() {
+            if (!allData || allData.length === 0) {
+                alert("No data loaded. Please select a folder first.");
+                return;
+            }
+
+            const zip = new JSZip();
+            const btn = document.getElementById('batchExportBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "Generating... (0%)";
+            btn.disabled = true;
+
+            // 1. Group data by Controller -> Topology -> Metric
+            const hierarchy = {};
+            allData.forEach(item => {
+                const c = item.controller || "Unknown";
+                const t = item.topology || "Unknown";
+                const m = item.metric || "Unknown";
+                if (!hierarchy[c]) hierarchy[c] = {};
+                if (!hierarchy[c][t]) hierarchy[c][t] = {};
+                if (!hierarchy[c][t][m]) hierarchy[c][t][m] = [];
+                hierarchy[c][t][m].push(item);
+            });
+
+            // 2. Calculate total tasks for progress bar
+            let totalTasks = 0;
+            for (const c in hierarchy) 
+                for (const t in hierarchy[c]) 
+                    for (const m in hierarchy[c][t]) {
+                        totalTasks++;
+                    }
+
+            if (totalTasks === 0) {
+                alert("No data found to export.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            let processed = 0;
+
+            // Helper to render chart to blob
+            const renderToBlob = (config) => {
+                return new Promise(resolve => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 800;
+                    canvas.height = 600;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // White Background Plugin
+                    const whiteBg = {
+                        id: 'whiteBg',
+                        beforeDraw: (chart) => {
+                            const ctx = chart.ctx;
+                            ctx.save();
+                            ctx.fillStyle = 'white';
+                            ctx.fillRect(0, 0, chart.width, chart.height);
+                            ctx.restore();
+                        }
+                    };
+                    config.plugins = [whiteBg, errorBarPlugin, ...(config.plugins || [])];
+                    config.options.animation = false;
+                    config.options.responsive = false;
+                    config.options.devicePixelRatio = 2;
+
+                    const chart = new Chart(ctx, config);
+                    setTimeout(() => {
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({
+                            orientation: canvas.width > canvas.height ? 'l' : 'p',
+                            unit: 'px',
+                            format: [canvas.width, canvas.height]
+                        });
+                        pdf.addImage(chart.toBase64Image('image/png', 1.0), 'PNG', 0, 0, canvas.width, canvas.height);
+                        const pdfBlob = pdf.output('blob');
+                        chart.destroy();
+                        resolve(pdfBlob);
+                    }, 50);
+                });
+            };
+
+            // 3. Iterate and Generate
+            for (const c in hierarchy) {
+                for (const t in hierarchy[c]) {
+                    for (const m in hierarchy[c][t]) {
+                        const rawScenarios = hierarchy[c][t][m];
+                        
+                        // --- DEDUPLICATION ---
+                        const scenarioMap = new Map();
+                        rawScenarios.forEach(item => {
+                            if (!scenarioMap.has(item.scenario)) {
+                                scenarioMap.set(item.scenario, item);
+                            } else {
+                                const existing = scenarioMap.get(item.scenario);
+                                const existingCols = existing.data.length > 0 ? Object.keys(existing.data[0]).length : 0;
+                                const newCols = item.data.length > 0 ? Object.keys(item.data[0]).length : 0;
+                                if (newCols > existingCols) scenarioMap.set(item.scenario, item);
+                            }
+                        });
+                        const scenarios = Array.from(scenarioMap.values());
+                        const reference = scenarios.find(s => s.scenario.toLowerCase().includes('baseline')) || scenarios[0];
+
+                        if (!reference || reference.data.length === 0) continue;
+
+                        // Determine X Key
+                        let xKey = 'switches';
+                        const keys = Object.keys(reference.data[0]);
+                        const potX = ['switches', 'num_switches', 'Switchers', 'hosts', 'num_nodes', 'topology_size'];
+                        xKey = potX.find(k => keys.includes(k)) || keys[0];
+
+                        // --- MULTI-METRIC DETECTION (Throughput vs Latency) ---
+                        const targetYGroups = [
+                            { name: 'Throughput', keywords: ['throughput', 'thr', 'bps'] },
+                            { name: 'Latency', keywords: ['latency', 'delay', 'rtt', 'jitter', 'time'] }
+                        ];
+
+                        const isDITG = m.toUpperCase().includes("D-ITG");
+                        let activeGroups = targetYGroups;
+
+                        if (m.includes("(Throughput)")) {
+                            activeGroups = [targetYGroups[0]];
+                        } else if (m.includes("(Average Delay)")) {
+                            activeGroups = [targetYGroups[1]];
+                        } else if (!isDITG) {
+                            // For non-D-ITG metrics, revert to exporting only the pre-selected measurement
+                            activeGroups = [{ name: "", isSelected: true }];
+                        }
+
+                        for (const group of activeGroups) {
+                            // Helper to find the best Y key for a specific scenario item
+                            const findYKey = (item) => {
+                                if (group.isSelected && item.selectedY) return item.selectedY;
+                                const itemKeys = item.data.length > 0 ? Object.keys(item.data[0]) : [];
+                                return itemKeys.find(k => 
+                                    group.keywords.some(kw => k.toLowerCase().includes(kw)) && 
+                                    k !== xKey && !k.endsWith('_min') && !k.endsWith('_max')
+                                );
+                            };
+
+                            // Check if at least the reference has a valid key for this group
+                            const refYKey = findYKey(reference);
+                            if (!refYKey) continue;
+
+                            const allLabelsSet = new Set();
+                            scenarios.forEach(s => s.data.forEach(r => allLabelsSet.add(r[xKey])));
+                            const allLabels = Array.from(allLabelsSet).sort((a, b) => a - b);
+
+                            let yMin = Infinity, yMax = -Infinity;
+                            const datasets = scenarios.map((s, idx) => {
+                                const localYKey = findYKey(s) || refYKey; // Fallback to reference key if local not found
+                                
+                                const data = allLabels.map(l => {
+                                    const row = s.data.find(r => r[xKey] === l);
+                                    const val = row ? row[localYKey] : null;
+                                    if (val !== null && !isNaN(val)) {
+                                        yMin = Math.min(yMin, val);
+                                        yMax = Math.max(yMax, val);
+                                    }
+                                    return val;
+                                });
+
+                                const errorBars = allLabels.map(l => {
+                                    const row = s.data.find(r => r[xKey] === l);
+                                    if (row) {
+                                        const minVal = row[localYKey + "_min"];
+                                        const maxVal = row[localYKey + "_max"];
+                                        if (minVal !== undefined && maxVal !== undefined) {
+                                            yMin = Math.min(yMin, minVal);
+                                            yMax = Math.max(yMax, maxVal);
+                                            return { min: minVal, max: maxVal };
+                                        }
+                                    }
+                                    return null;
+                                });
+
+                                const color = getScenarioColor(s.scenario, idx);
+                                return {
+                                    label: s.scenario,
+                                    data: data,
+                                    errorBars: errorBars,
+                                    borderColor: color,
+                                    backgroundColor: color,
+                                    borderWidth: 3,
+                                    pointRadius: 4,
+                                    tension: 0.1,
+                                    fill: false
+                                };
+                            });
+
+                            const range = (yMax !== -Infinity && yMin !== Infinity) ? yMax - yMin : 0;
+                            const padding = range === 0 ? (yMax === 0 ? 1 : Math.abs(yMax) * 0.1) : range * 0.05;
+
+                            const config = {
+                                type: 'line',
+                                data: { labels: allLabels, datasets: datasets },
+                                options: {
+                                    scales: {
+                                        x: { 
+                                            type: 'category', offset: true,
+                                            title: { display: true, text: xKey, color: 'black', font: { size: 16 } }, 
+                                            ticks: { color: 'black', font: { size: 14 } }, grid: { display: false } 
+                                        },
+                                        y: { 
+                                            title: { display: true, text: refYKey, color: 'black', font: { size: 16 } }, 
+                                            ticks: { color: 'black', font: { size: 14 } }, grid: { color: '#d1d5db' },
+                                            suggestedMin: Math.max(0, yMin - padding), suggestedMax: yMax + padding
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: { position: 'right', align: 'start', labels: { color: 'black', boxWidth: 5, font: { size: 12 } } },
+                                        title: { display: false }
+                                    }
+                                }
+                            };
+
+                            const blob = await renderToBlob(config);
+                            const safeC = c.replace(/[^a-z0-9]/gi, '');
+                            const safeT = t.replace(/[^a-z0-9_\-]/gi, '');
+                            const safeM = m.replace(/[^a-z0-9_\- ]/gi, '').trim();
+                            const suffix = (isDITG && group.name) ? `_${group.name}` : "";
+                            const fileName = `Comparison_${safeC}_${safeT}_${safeM}${suffix}`.replace(/ /g, '_');
+                            
+                            zip.file(`${safeC}/${safeT}/${safeM}/${fileName}.pdf`, blob);
+                        }
+
+                        processed++;
+                        btn.innerText = `Generating... (${Math.round(processed/totalTasks*100)}%)`;
+                        await new Promise(r => setTimeout(r, 0));
+                    }
+                }
+            }
+
+            btn.innerText = "Zipping...";
+            const content = await zip.generateAsync({type:"blob"});
+            saveAs(content, "batch_comparison_graphs.zip");
+            
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+
+        function generateSummaryTable(chartData, metricName, xKey) {
+            const container = document.getElementById('summaryTableContainer');
+            if (!chartData || chartData.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            // Find baseline dataset (heuristic: contains 'traffic' or 'baseline')
+            const baseline = chartData.find(d => d.scenario.toLowerCase().includes('traffic') || d.scenario.toLowerCase().includes('baseline')) || chartData[0];
+            
+            // Get all unique X values sorted
+            const allX = new Set();
+            chartData.forEach(ds => {
+                ds.data.forEach(row => {
+                    if (row[xKey] !== undefined && row[xKey] !== null) {
+                        allX.add(row[xKey]);
+                    }
+                });
+            });
+            const sortedX = Array.from(allX).sort((a, b) => a - b);
+
+            const otherScenarios = chartData.filter(d => d !== baseline);
+
+            let html = `
+                <h3 style="font-size: 14px; color: #e5e7eb; margin-bottom: 10px;">Detailed Impact Analysis by ${xKey}</h3>
+                <div style="overflow-x: auto;">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th style="position: sticky; left: 0; background: #020617; z-index: 1;">${xKey}</th>
+                            <th>${baseline.scenario} (Base)</th>
+            `;
+            
+            otherScenarios.forEach(ds => {
+                html += `<th style="border-left: 1px solid #374151;">${ds.scenario}</th><th>Impact %</th>`;
+            });
+            
+            html += `
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            sortedX.forEach(xVal => {
+                const baseRow = baseline.data.find(r => r[xKey] === xVal);
+                const baseVal = baseRow ? baseRow[metricName] : null;
+                const baseDisplay = (baseVal !== null && baseVal !== undefined) ? baseVal.toFixed(4) : '-';
+                
+                html += `<tr>
+                    <td style="font-weight:bold; position: sticky; left: 0; background: #020617;">${xVal}</td>
+                    <td>${baseDisplay}</td>
+                `;
+
+                otherScenarios.forEach(ds => {
+                    const row = ds.data.find(r => r[xKey] === xVal);
+                    const val = row ? row[metricName] : null;
+                    
+                    let valStr = '-';
+                    let diffStr = '-';
+                    let diffClass = 'diff-neutral';
+
+                    if (val !== null && val !== undefined) {
+                        valStr = val.toFixed(4);
+                        
+                        if (baseVal !== null && baseVal !== undefined && baseVal !== 0) {
+                            const diff = ((val - baseVal) / baseVal) * 100;
+                            const sign = diff > 0 ? "+" : "";
+                            diffStr = `${sign}${diff.toFixed(2)}%`;
+                            
+                            const isLatency = metricName.toLowerCase().includes('time') || metricName.toLowerCase().includes('latency') || metricName.toLowerCase().includes('jitter') || metricName.toLowerCase().includes('delay') || metricName.toLowerCase().includes('rtt');
+                            
+                            if (isLatency) {
+                                diffClass = diff > 0 ? "diff-negative" : "diff-positive";
+                            } else {
+                                diffClass = diff < 0 ? "diff-negative" : "diff-positive";
+                            }
+                        } else if (baseVal === 0 && val !== 0) {
+                             diffStr = "Inf";
+                        } else if (baseVal === 0 && val === 0) {
+                             diffStr = "0%";
+                        }
+                    }
+
+                    html += `
+                        <td style="border-left: 1px solid #374151;">${valStr}</td>
+                        <td class="${diffClass}">${diffStr}</td>
+                    `;
+                });
+
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thesis Comparison Grid</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-body: #020617;
+            --bg-surface: rgba(15, 23, 42, 0.98);
+            --border-subtle: #1f2937;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent: #38bdf8;
+            --radius-lg: 14px;
+        }
+
+        body {
+            margin: 0; padding: 20px;
+            font-family: system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .controls {
+            background: var(--bg-surface);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 30px;
+            display: flex; gap: 20px; align-items: center;
+        }
+
+        select, .btn {
+            background: #0f172a;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .thesis-section { margin-bottom: 50px; }
+        .thesis-section h2 {
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .metric-row { margin-bottom: 30px; }
+        .metric-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .chart-card {
+            background: #020617;
+            border: 1px solid #111827;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .chart-card h4 { margin: 0 0 10px 0; font-size: 13px; color: var(--accent); }
+        canvas { max-height: 220px; width: 100% !important; }
+
+        .no-data {
+            font-style: italic;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            border: 1px dashed #1f2937;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        /* Loading Bar Styles */
+        #loadingBarContainer {
+            width: 100%;
+            height: 4px;
+            background: #0f172a;
+            margin-bottom: 20px;
+            display: none;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        #loadingBar {
+            width: 40%;
+            height: 100%;
+            background: var(--accent);
+            animation: loading 1.5s infinite ease-in-out;
+        }
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Thesis Comparison Grid</h1>
+        <a href="/compare" style="color: var(--accent); text-decoration: none; font-size: 14px;">← Back to Comparison</a>
+    </div>
+
+    <div class="controls">
+        <div>
+            <label>Data Folder:</label>
+            <select id="folderSelector">
+                <option selected>Choose folder...</option>
+                {% for folder in folders %}
+                    <option value="{{ folder.name }}">{{ folder.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>Thesis Section:</label>
+            <select id="sectionSelector" onchange="renderGrid()">
+                <!-- Populated by JS -->
+            </select>
+        </div>
+        <div>
+            <label>Comparison Mode:</label>
+            <select id="viewModeSelector" onchange="renderGrid()">
+                <option value="controller">By Controller (Compare Topologies)</option>
+                <option value="topology">By Topology (Compare Controllers)</option>
+            </select>
+        </div>
+        <button class="btn" onclick="loadData()" style="cursor:pointer; background: var(--accent); color: #000; font-weight: bold;">Refresh Grid</button>
+        <button id="batchExportBtn" class="btn" onclick="batchExport()" style="cursor:pointer; background: #1f2937; color: var(--accent); border: 1px solid var(--accent); margin-left: 10px;">Batch Export PDF</button>
+    </div>
+
+    <div id="loadingBarContainer">
+        <div id="loadingBar"></div>
+    </div>
+
+    <div id="insightsPanel" style="display:none; margin-bottom: 30px; background: rgba(56, 189, 248, 0.05); border: 1px solid var(--accent); padding: 20px; border-radius: var(--radius-lg);">
+        <h2 style="margin-top:0; font-size: 18px; color: var(--accent);">📊 Analytical Insights (Automated)</h2>
+        <div id="insightsContent" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
+    </div>
+
+    <div id="rttSummaryPanel" style="display:none; margin-bottom: 30px; background: #020617; border: 1px solid var(--border-subtle); padding: 20px; border-radius: var(--radius-lg);">
+        <h2 style="margin-top:0; font-size: 18px; color: var(--accent);">⏱️ RTT Statistics Summary</h2>
+        <div id="rttSummaryContent"></div>
+    </div>
+
+    <div id="throughputSummaryPanel" style="display:none; margin-bottom: 30px; background: #020617; border: 1px solid var(--border-subtle); padding: 20px; border-radius: var(--radius-lg);">
+        <h2 style="margin-top:0; font-size: 18px; color: var(--accent);">🚀 Throughput Statistics Summary</h2>
+        <div id="throughputSummaryContent"></div>
+    </div>
+
+    <div id="thesisGrid"></div>
+
+    <script>
+        let allData = [];
+        const controllers = ["ONOS", "ODL", "RYU"];
+        const topologies = ["MESH", "3-TIER"];
+        
+        const thesisStructure = [
+            {
+                name: "Northbound Interface Performance",
+                metrics: [
+                    { label: "Average RTT (Latency)", key: "LATENCY (NORTHBOUND)" },
+                    { label: "Average Throughput", key: "THROUGHPUT (NORTHBOUND)" }
+                ]
+            },
+            {
+                name: "Southbound Node-to-Node (Reactive)",
+                metrics: [
+                    { label: "Average RTT (Latency)", key: "LATENCY (SOUTHBOUND NN)" },
+                    { label: "Average Throughput", key: "THROUGHPUT (SOUTHBOUND NN)" }
+                ]
+            },
+            {
+                name: "Southbound Node-to-Node (Proactive)",
+                metrics: [
+                    { label: "Average RTT (Latency)", key: "LATENCY (SOUTHBOUND NNP)" },
+                    { label: "Average Throughput", key: "THROUGHPUT (SOUTHBOUND NNP)" }
+                ]
+            },
+            {
+                name: "Switch-to-Controller (Reactive)",
+                metrics: [
+                    { label: "Average RTT (Latency)", key: "RTT (RPPT)" },
+                    { label: "Average Throughput", key: "THROUGHPUT (RPPT)" }
+                ]
+            },
+            {
+                name: "Switch-to-Controller (Proactive)",
+                metrics: [
+                    { label: "Average RTT (Latency)", key: "RTT (PPPT)" },
+                    { label: "Average Throughput", key: "THROUGHPUT (PPPT)" }
+                ]
+            },
+            {
+                name: "Background Traffic QoS",
+                metrics: [
+                    { label: "Average Delay", key: "D-ITG (Average Delay)" },
+                    { label: "Throughput", key: "D-ITG (Throughput)" }
+                ]
+            }
+        ];
+
+        // Populate section selector on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const sel = document.getElementById('sectionSelector');
+            thesisStructure.forEach((s, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = s.name;
+                sel.appendChild(opt);
+            });
+        });
+
+        async function loadData() {
+            const folder = document.getElementById('folderSelector').value;
+            if (!folder || folder.includes('Choose')) return;
+
+            document.getElementById('loadingBarContainer').style.display = 'block';
+
+            const response = await fetch(`/api/comparison_data/${folder}?details=true`);
+            const jsonResponse = await response.json();
+            
+            let rawData = [];
+            if (Array.isArray(jsonResponse)) {
+                rawData = jsonResponse;
+            } else {
+                rawData = jsonResponse.data;
+            }
+
+            allData = [];
+            rawData.forEach(item => {
+                const keys = item.data.length > 0 ? Object.keys(item.data[0]) : [];
+                if (item.metric.toUpperCase().includes("D-ITG")) {
+                    let thrKey = keys.find(k => k.toLowerCase().includes('throughput') && (k.toLowerCase().includes('avg') || k.toLowerCase().includes('average')));
+                    if (!thrKey) thrKey = keys.find(k => k.toLowerCase().includes('throughput'));
+
+                    let delayKey = keys.find(k => (k.toLowerCase().includes('delay') || k.toLowerCase().includes('latency')) && (k.toLowerCase().includes('avg') || k.toLowerCase().includes('average')));
+                    if (!delayKey) delayKey = keys.find(k => k.toLowerCase().includes('delay') || k.toLowerCase().includes('latency'));
+
+                    if (thrKey) allData.push({ ...item, metric: "D-ITG (Throughput)", selectedY: thrKey });
+                    if (delayKey) allData.push({ ...item, metric: "D-ITG (Average Delay)", selectedY: delayKey });
+                } else {
+                    const preferredY = ['Throughput', 'tp', 'thr', 'rtt', 'latency', 'time', 'delay'];
+                    // Prioritize Average values
+                    let yKey = keys.find(k => preferredY.some(p => k.toLowerCase().includes(p.toLowerCase())) && (k.toLowerCase().includes('avg') || k.toLowerCase().includes('average')) && !k.endsWith('_min') && !k.endsWith('_max'));
+                    if (!yKey) {
+                        yKey = keys.find(k => preferredY.some(p => k.toLowerCase().includes(p.toLowerCase())) && !k.endsWith('_min') && !k.endsWith('_max'));
+                    }
+                    allData.push({ ...item, selectedY: yKey });
+                }
+            });
+
+            renderGrid();
+        }
+
+        // Helper to calculate min/max for a specific subset of data
+        function calcBounds(subsetData) {
+            let min = Infinity, max = -Infinity;
+            subsetData.forEach(d => {
+                d.data.forEach(row => {
+                    const val = parseFloat(row[d.selectedY]);
+                    if (!isNaN(val) && row[d.selectedY] !== null) {
+                        min = Math.min(min, val);
+                        max = Math.max(max, val);
+                    }
+                    // Explicitly check for Std Dev bounds (_min / _max columns)
+                    if (row[d.selectedY + "_min"] !== undefined && row[d.selectedY + "_min"] !== null) {
+                        min = Math.min(min, parseFloat(row[d.selectedY + "_min"]));
+                    }
+                    if (row[d.selectedY + "_max"] !== undefined && row[d.selectedY + "_max"] !== null) {
+                        max = Math.max(max, parseFloat(row[d.selectedY + "_max"]));
+                    }
+                });
+            });
+            return { min, max };
+        }
+
+        function renderGrid() {
+            const container = document.getElementById('thesisGrid');
+            const sectionIdx = document.getElementById('sectionSelector').value;
+            const viewMode = document.getElementById('viewModeSelector').value;
+            const section = thesisStructure[sectionIdx];
+            const loadingBar = document.getElementById('loadingBarContainer');
+            
+            loadingBar.style.display = 'block';
+            container.innerHTML = '';
+
+            if (!section) {
+                loadingBar.style.display = 'none';
+                return;
+            }
+            
+            generateInsights(section);
+            generateRTTTable(section);
+            generateThroughputTable(section);
+
+            // Use setTimeout to allow the loading bar to render before heavy chart generation
+            setTimeout(() => {
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'thesis-section';
+                sectionEl.innerHTML = `<h2>${section.name}</h2>`;
+
+                section.metrics.forEach(mInfo => {
+                    const rowEl = document.createElement('div');
+                    rowEl.className = 'metric-row';
+                    rowEl.innerHTML = `<div class="metric-title">${mInfo.label}</div>`;
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid-container';
+
+                    const metricData = allData.filter(d => d.metric.toUpperCase() === mInfo.key.toUpperCase());
+
+                    if (viewMode === 'controller') {
+                        grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                        controllers.forEach(ctrl => {
+                            // 1. Filter data for this Controller (across ALL topologies)
+                            const ctrlSubset = metricData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                            
+                            // 2. Calculate common Y-axis bounds for this controller's row
+                            const { min, max } = calcBounds(ctrlSubset);
+
+                            topologies.forEach(topo => {
+                                // 3. Pass these bounds to force the same window size
+                                createCard(grid, ctrl, topo, mInfo, min, max);
+                            });
+                        });
+                    } else {
+                        grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                        topologies.forEach(topo => {
+                            // 1. Filter data for this Topology (across ALL controllers)
+                            const topoSubset = metricData.filter(d => d.topology.toUpperCase() === topo.toUpperCase());
+                            
+                            // 2. Calculate common Y-axis bounds for this topology's row
+                            const { min, max } = calcBounds(topoSubset);
+
+                            controllers.forEach(ctrl => {
+                                // 3. Pass these bounds
+                                createCard(grid, ctrl, topo, mInfo, min, max);
+                            });
+                        });
+                    }
+
+                    rowEl.appendChild(grid);
+                    sectionEl.appendChild(rowEl);
+                });
+                container.appendChild(sectionEl);
+                loadingBar.style.display = 'none';
+            }, 50);
+        }
+
+        function generateInsights(section) {
+            const panel = document.getElementById('insightsPanel');
+            const content = document.getElementById('insightsContent');
+            content.innerHTML = '';
+            
+            if (allData.length === 0) { panel.style.display = 'none'; return; }
+            panel.style.display = 'block';
+
+            section.metrics.forEach(mInfo => {
+                const metricData = allData.filter(d => d.metric.toUpperCase() === mInfo.key.toUpperCase());
+                if (metricData.length === 0) return;
+
+                const isLatency = mInfo.label.toLowerCase().includes('latency') || mInfo.label.toLowerCase().includes('rtt') || mInfo.label.toLowerCase().includes('delay');
+                
+                // 1. Topology Sensitivity
+                let topoInsight = `<div class="insight-card"><h3>🌐 Topology & Scalability: ${mInfo.label}</h3>`;
+                controllers.forEach(ctrl => {
+                    const cData = metricData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                    
+                    // Filter for baseline only to ensure sensitivity and scalability reflect normal operation
+                    const baselineData = cData.filter(d => d.scenario.toLowerCase().includes('baseline') || d.scenario.toLowerCase().includes('traffic'));
+                    const meshData = baselineData.filter(d => d.topology.toUpperCase() === 'MESH');
+                    const tierData = baselineData.filter(d => d.topology.toUpperCase() === '3-TIER');
+                    
+                    const meshAvg = getAvg(meshData);
+                    const tierAvg = getAvg(tierData);
+                    
+                    if (meshAvg !== null && tierAvg !== null && !isNaN(meshAvg) && !isNaN(tierAvg)) {
+                        const diff = Math.abs((meshAvg - tierAvg) / Math.min(meshAvg, tierAvg)) * 100;
+                        const status = diff > 20 ? 'status-bad' : 'status-good';
+                        
+                        // Determine better topology
+                        let better = "Equal";
+                        if (Math.abs(meshAvg - tierAvg) / Math.max(meshAvg, tierAvg) > 0.05) {
+                            if (isLatency) {
+                                better = meshAvg < tierAvg ? "Mesh" : "3-Tier";
+                            } else {
+                                better = meshAvg > tierAvg ? "Mesh" : "3-Tier";
+                            }
+                        }
+
+                        // Check Scalability (Trend as switches increase)
+                        const meshScale = checkScalability(meshData, isLatency);
+                        const tierScale = checkScalability(tierData, isLatency);
+                        const scaleStatus = (meshScale === "Degrading" || tierScale === "Degrading") ? "status-bad" : "status-good";
+
+                        topoInsight += `<p><b style="color:var(--text-main)">${ctrl}:</b> Variance <span class="${status}">${diff.toFixed(1)}%</span></p>`;
+                        topoInsight += `<p style="margin-left:15px; font-size:11px; margin-top:-5px; margin-bottom:10px;">` + 
+                                       `Best: <span class="status-good">${better}</span> | ` +
+                                       `Scalability: <span class="${scaleStatus}">${meshScale}/${tierScale}</span></p>`;
+                    } else {
+                        topoInsight += `<p><b style="color:var(--text-main)">${ctrl}:</b> <span class="text-muted">Insufficient Data</span></p>`;
+                    }
+                });
+                topoInsight += `</div>`;
+
+                // 2. Attack Impact
+                let attackInsight = `<div class="insight-card"><h3>⚡ Attack Impact: ${mInfo.label}</h3>`;
+                const baselineData = metricData.filter(d => d.scenario.toLowerCase().includes('baseline') || d.scenario.toLowerCase().includes('traffic'));
+                const baseAvgOverall = getAvg(baselineData);
+                
+                if (baseAvgOverall !== null && !isNaN(baseAvgOverall)) {
+                    const scenarios = [...new Set(metricData.map(d => d.scenario))].filter(s => !s.toLowerCase().includes('baseline') && !s.toLowerCase().includes('traffic'));
+                    scenarios.forEach(scen => {
+                        const scenarioData = metricData.filter(d => d.scenario === scen);
+                        const sAvgOverall = getAvg(scenarioData);
+                        const impactOverall = ((sAvgOverall - baseAvgOverall) / baseAvgOverall) * 100;
+                        const isDegradationOverall = isLatency ? impactOverall > 0 : impactOverall < 0;
+                        const statusOverall = isDegradationOverall ? 'status-bad' : 'status-good';
+                        
+                        attackInsight += `<p><b style="color:var(--text-main)">${scen}:</b> <span class="insight-val ${statusOverall}">${impactOverall > 0 ? '+' : ''}${impactOverall.toFixed(1)}%</span> (Overall)</p>`;
+                        
+                        // Controller breakdown
+                        let ctrlBreakdown = `<div style="margin-left:15px; font-size:11px; margin-top:-5px; margin-bottom:10px; color:var(--text-muted)">`;
+                        controllers.forEach(ctrl => {
+                            const ctrlBaseData = baselineData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                            const ctrlScenData = scenarioData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                            const cBaseAvg = getAvg(ctrlBaseData);
+                            const cScenAvg = getAvg(ctrlScenData);
+                            
+                            if (cBaseAvg && cScenAvg) {
+                                const cImpact = ((cScenAvg - cBaseAvg) / cBaseAvg) * 100;
+                                const isDegradation = isLatency ? cImpact > 0 : cImpact < 0;
+                                const status = isDegradation ? 'status-bad' : 'status-good';
+                                ctrlBreakdown += `${ctrl}: <span class="${status}">${cImpact > 0 ? '+' : ''}${cImpact.toFixed(1)}%</span> | `;
+                            }
+                        });
+                        attackInsight += ctrlBreakdown.replace(/ \| $/, '') + `</div>`;
+                    });
+                } else {
+                    attackInsight += `<p>No baseline found for comparison.</p>`;
+                }
+                attackInsight += `</div>`;
+
+                // 3. Best Performer
+                let bestInsight = `<div class="insight-card"><h3>🏆 Controller Ranking: ${mInfo.label}</h3>`;
+                topologies.forEach(topo => {
+                    let ranking = [];
+
+                    controllers.forEach(ctrl => {
+                        const val = getAvg(metricData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase() && d.topology.toUpperCase() === topo.toUpperCase()));
+                        if (val !== null) {
+                            ranking.push({ ctrl, val });
+                        }
+                    });
+
+                    if (ranking.length > 0) {
+                        // Sort: Latency (lower is better), Throughput (higher is better)
+                        ranking.sort((a, b) => isLatency ? a.val - b.val : b.val - a.val);
+                        
+                        bestInsight += `<p><b style="color:var(--text-main)">${topo}:</b></p>`;
+                        ranking.forEach((item, idx) => {
+                            const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx+1}.`));
+                            const colorClass = idx === 0 ? 'status-good' : '';
+                            bestInsight += `<p style="margin-left:15px; font-size:11px; margin-top:-5px; margin-bottom:8px;">` +
+                                           `${medal} <span class="${colorClass}">${item.ctrl}</span> (${item.val.toFixed(3)})</p>`;
+                        });
+                    }
+                });
+                bestInsight += `</div>`;
+
+                content.innerHTML += topoInsight + attackInsight + bestInsight;
+            });
+        }
+
+        function generateRTTTable(section) {
+            const panel = document.getElementById('rttSummaryPanel');
+            const content = document.getElementById('rttSummaryContent');
+            content.innerHTML = '';
+            
+            // Find RTT metric
+            const rttMetric = section.metrics.find(m => 
+                m.label.toLowerCase().includes('latency') || 
+                m.label.toLowerCase().includes('rtt') || 
+                m.label.toLowerCase().includes('delay')
+            );
+
+            if (!rttMetric || allData.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+            
+            // Filter data for this metric
+            const metricData = allData.filter(d => d.metric.toUpperCase() === rttMetric.key.toUpperCase());
+
+            topologies.forEach(topo => {
+                // Filter data for topology
+                const topoData = metricData.filter(d => d.topology.toUpperCase() === topo.toUpperCase());
+                if (topoData.length === 0) return;
+
+                const tableTitle = document.createElement('h3');
+                tableTitle.style.color = '#e5e7eb';
+                tableTitle.style.fontSize = '14px';
+                tableTitle.style.marginTop = '20px';
+                tableTitle.textContent = `Topology: ${topo}`;
+                content.appendChild(tableTitle);
+
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.fontSize = '13px';
+                table.style.marginBottom = '10px';
+
+                // Header
+                let thead = `<thead><tr style="background: #0f172a; color: #9ca3af; text-align: left;">
+                    <th style="padding: 8px; border-bottom: 1px solid #1f2937;">Scenario</th>`;
+                controllers.forEach(ctrl => {
+                    thead += `<th style="padding: 8px; border-bottom: 1px solid #1f2937;">${ctrl}</th>`;
+                });
+                thead += `<th style="padding: 8px; border-bottom: 1px solid #1f2937;">Average</th></tr></thead>`;
+                table.innerHTML = thead;
+
+                const tbody = document.createElement('tbody');
+                
+                // Identify Scenarios
+                const allScenarios = [...new Set(topoData.map(d => d.scenario))];
+                const baselineScenarios = allScenarios.filter(s => s.toLowerCase().includes('baseline') || s.toLowerCase().includes('traffic'));
+                const attackScenarios = allScenarios.filter(s => !baselineScenarios.includes(s)).sort();
+
+                // Calculate Baseline Averages for Comparison
+                const baselineData = topoData.filter(d => baselineScenarios.includes(d.scenario));
+                const baselineMap = {};
+                if (baselineData.length > 0) {
+                    controllers.forEach(ctrl => {
+                        const cData = baselineData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                        baselineMap[ctrl] = getAvg(cData);
+                    });
+                    baselineMap['Total'] = getAvg(baselineData);
+                }
+
+                // Helper to create row
+                const createRow = (label, dataSubset, isBaseline) => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid #1f2937';
+                    let rowHtml = `<td style="padding: 8px; color: #e5e7eb;">${label}</td>`;
+                    controllers.forEach(ctrl => {
+                        const ctrlData = dataSubset.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                        const avg = getAvg(ctrlData);
+                        const display = avg !== null ? avg.toFixed(2) + ' ms' : '-';
+                        
+                        let color = '#9ca3af'; // Default gray
+                        if (!isBaseline && avg !== null && baselineMap[ctrl]) {
+                            const base = baselineMap[ctrl];
+                            const diff = (avg - base) / base; // % change
+                            // Latency: Increase is bad
+                            if (diff > 0.75) color = '#f87171';      // > 75% Red
+                            else if (diff > 0.25) color = '#fbbf24'; // > 25% Yellow
+                            else if (diff < -0.10) color = '#4ade80';// < -10% Green (Improvement)
+                        }
+
+                        rowHtml += `<td style="padding: 8px; color: ${color};">${display}</td>`;
+                    });
+                    const totalAvg = getAvg(dataSubset);
+                    
+                    let totalColor = '#38bdf8'; // Default blue
+                    if (!isBaseline && totalAvg !== null && baselineMap['Total']) {
+                        const base = baselineMap['Total'];
+                        const diff = (totalAvg - base) / base;
+                        if (diff > 0.75) totalColor = '#f87171';
+                        else if (diff > 0.25) totalColor = '#fbbf24';
+                        else if (diff < -0.10) totalColor = '#4ade80';
+                    }
+
+                    const totalDisplay = totalAvg !== null ? `<strong style="color: ${totalColor};">${totalAvg.toFixed(2)} ms</strong>` : '-';
+                    rowHtml += `<td style="padding: 8px;">${totalDisplay}</td>`;
+                    tr.innerHTML = rowHtml;
+                    return tr;
+                };
+
+                // 1. Overall Average RTT
+                tbody.appendChild(createRow('Overall Average', topoData, false));
+
+                // 2. Baseline
+                if (baselineData.length > 0) {
+                    tbody.appendChild(createRow('Baseline', baselineData, true));
+                }
+
+                // 3. Attacks
+                attackScenarios.forEach(scen => {
+                    const scenData = topoData.filter(d => d.scenario === scen);
+                    tbody.appendChild(createRow(scen, scenData, false));
+                });
+
+                table.appendChild(tbody);
+                content.appendChild(table);
+            });
+        }
+
+        function generateThroughputTable(section) {
+            const panel = document.getElementById('throughputSummaryPanel');
+            const content = document.getElementById('throughputSummaryContent');
+            content.innerHTML = '';
+            
+            // Find Throughput metric
+            const thrMetric = section.metrics.find(m => 
+                m.label.toLowerCase().includes('throughput') || 
+                m.label.toLowerCase().includes('thr') || 
+                m.label.toLowerCase().includes('tp')
+            );
+
+            if (!thrMetric || allData.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+            
+            // Filter data for this metric
+            const metricData = allData.filter(d => d.metric.toUpperCase() === thrMetric.key.toUpperCase());
+
+            topologies.forEach(topo => {
+                // Filter data for topology
+                const topoData = metricData.filter(d => d.topology.toUpperCase() === topo.toUpperCase());
+                if (topoData.length === 0) return;
+
+                const tableTitle = document.createElement('h3');
+                tableTitle.style.color = '#e5e7eb';
+                tableTitle.style.fontSize = '14px';
+                tableTitle.style.marginTop = '20px';
+                tableTitle.textContent = `Topology: ${topo}`;
+                content.appendChild(tableTitle);
+
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.fontSize = '13px';
+                table.style.marginBottom = '10px';
+
+                // Header
+                let thead = `<thead><tr style="background: #0f172a; color: #9ca3af; text-align: left;">
+                    <th style="padding: 8px; border-bottom: 1px solid #1f2937;">Scenario</th>`;
+                controllers.forEach(ctrl => {
+                    thead += `<th style="padding: 8px; border-bottom: 1px solid #1f2937;">${ctrl}</th>`;
+                });
+                thead += `<th style="padding: 8px; border-bottom: 1px solid #1f2937;">Average</th></tr></thead>`;
+                table.innerHTML = thead;
+
+                const tbody = document.createElement('tbody');
+                
+                // Identify Scenarios
+                const allScenarios = [...new Set(topoData.map(d => d.scenario))];
+                const baselineScenarios = allScenarios.filter(s => s.toLowerCase().includes('baseline') || s.toLowerCase().includes('traffic'));
+                const attackScenarios = allScenarios.filter(s => !baselineScenarios.includes(s)).sort();
+
+                // Calculate Baseline Averages
+                const baselineData = topoData.filter(d => baselineScenarios.includes(d.scenario));
+                const baselineMap = {};
+                if (baselineData.length > 0) {
+                    controllers.forEach(ctrl => {
+                        const cData = baselineData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                        baselineMap[ctrl] = getAvg(cData);
+                    });
+                    baselineMap['Total'] = getAvg(baselineData);
+                }
+
+                // Helper to create row
+                const createRow = (label, dataSubset, isBaseline) => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid #1f2937';
+                    let rowHtml = `<td style="padding: 8px; color: #e5e7eb;">${label}</td>`;
+                    controllers.forEach(ctrl => {
+                        const ctrlData = dataSubset.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                        const avg = getAvg(ctrlData);
+                        const display = avg !== null ? avg.toFixed(2) : '-';
+                        
+                        let color = '#9ca3af';
+                        if (!isBaseline && avg !== null && baselineMap[ctrl]) {
+                            const base = baselineMap[ctrl];
+                            const diff = (avg - base) / base;
+                            // Throughput: Decrease is bad
+                            if (diff < -0.75) color = '#f87171';      // Drop > 75% Red
+                            else if (diff < -0.25) color = '#fbbf24'; // Drop > 25% Yellow
+                            else if (diff > 0.10) color = '#4ade80';  // Increase > 10% Green
+                        }
+
+                        rowHtml += `<td style="padding: 8px; color: ${color};">${display}</td>`;
+                    });
+                    const totalAvg = getAvg(dataSubset);
+                    
+                    let totalColor = '#38bdf8';
+                    if (!isBaseline && totalAvg !== null && baselineMap['Total']) {
+                        const base = baselineMap['Total'];
+                        const diff = (totalAvg - base) / base;
+                        if (diff < -0.75) totalColor = '#f87171';
+                        else if (diff < -0.25) totalColor = '#fbbf24';
+                        else if (diff > 0.10) totalColor = '#4ade80';
+                    }
+
+                    const totalDisplay = totalAvg !== null ? `<strong style="color: ${totalColor};">${totalAvg.toFixed(2)}</strong>` : '-';
+                    rowHtml += `<td style="padding: 8px;">${totalDisplay}</td>`;
+                    tr.innerHTML = rowHtml;
+                    return tr;
+                };
+
+                // 1. Overall Average
+                tbody.appendChild(createRow('Overall Average', topoData, false));
+
+                // 2. Baseline
+                if (baselineData.length > 0) {
+                    tbody.appendChild(createRow('Baseline', baselineData, true));
+                }
+
+                // 3. Attacks
+                attackScenarios.forEach(scen => {
+                    const scenData = topoData.filter(d => d.scenario === scen);
+                    tbody.appendChild(createRow(scen, scenData, false));
+                });
+
+                table.appendChild(tbody);
+                content.appendChild(table);
+            });
+        }
+
+        function checkScalability(dataArray, isLatency) {
+            if (!dataArray || dataArray.length === 0) return "N/A";
+            let points = [];
+            dataArray.forEach(d => {
+                const xKey = Object.keys(d.data[0] || {}).find(k => ['switches', 'num_switches', 'hosts', 'Threads'].includes(k)) || 'num_switches';
+                d.data.forEach(row => {
+                    const val = parseFloat(row[d.selectedY]);
+                    if (!isNaN(val) && row[d.selectedY] !== null && row[xKey] !== undefined) {
+                        points.push({ x: row[xKey], y: val });
+                    }
+                });
+            });
+            if (points.length < 3) return "N/A";
+            points.sort((a, b) => a.x - b.x);
+            
+            const mid = Math.floor(points.length / 2);
+            const avg1 = points.slice(0, mid).reduce((s, p) => s + p.y, 0) / mid;
+            const avg2 = points.slice(mid).reduce((s, p) => s + p.y, 0) / (points.length - mid);
+            
+            if (isLatency) return avg2 > avg1 * 1.15 ? "Degrading" : "Stable";
+            return avg2 < avg1 * 0.85 ? "Degrading" : "Stable";
+        }
+
+        function getAvg(dataArray) {
+            if (!dataArray || dataArray.length === 0) return null;
+            let sum = 0, count = 0;
+            dataArray.forEach(d => {
+                d.data.forEach(row => {
+                    const val = parseFloat(row[d.selectedY]);
+                    if (!isNaN(val) && row[d.selectedY] !== null) {
+                        sum += val;
+                        count++;
+                    }
+                });
+            });
+            return count > 0 ? sum / count : null;
+        }
+
+        function createCard(grid, ctrl, topo, mInfo, yMin, yMax) {
+            const card = document.createElement('div');
+            card.className = 'chart-card';
+            
+            // Check if this is the winner for the leaderboard
+            const isLatency = mInfo.label.toLowerCase().includes('latency') || mInfo.label.toLowerCase().includes('rtt') || mInfo.label.toLowerCase().includes('delay');
+            const metricData = allData.filter(d => d.metric.toUpperCase() === mInfo.key.toUpperCase() && d.topology.toUpperCase() === topo.toUpperCase());
+            const currentAvg = getAvg(metricData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase()));
+            const allAvgs = controllers.map(c => getAvg(metricData.filter(d => d.controller.toUpperCase() === c.toUpperCase()))).filter(v => v !== null);
+            const isWinner = currentAvg !== null && currentAvg === (isLatency ? Math.min(...allAvgs) : Math.max(...allAvgs));
+
+            const header = document.createElement('div');
+            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;';
+            
+            const title = document.createElement('h4');
+            title.style.margin = '0';
+            title.style.fontSize = '13px';
+            title.style.color = 'var(--accent)';
+            title.innerHTML = `${ctrl} - ${topo} ${isWinner ? '<span class="winner-badge">BEST</span>' : ''}`;
+            header.appendChild(title);
+
+            const exportBtn = document.createElement('button');
+            exportBtn.innerText = '⬇ CSV';
+            exportBtn.title = 'Export Chart Data';
+            exportBtn.style.cssText = 'background: #1f2937; border: 1px solid #374151; color: #9ca3af; border-radius: 4px; cursor: pointer; font-size: 10px; padding: 2px 6px;';
+            
+            
+            const canvas = document.createElement('canvas');
+            const cellData = allData.filter(d => 
+                d.controller.toUpperCase() === ctrl.toUpperCase() && 
+                d.topology.toUpperCase() === topo.toUpperCase() &&
+                d.metric.toUpperCase() === mInfo.key.toUpperCase()
+            );
+
+            if (cellData.length > 0) {
+                exportBtn.onclick = () => exportChartData(ctrl, topo, mInfo, cellData);
+                header.appendChild(exportBtn);
+                card.appendChild(header);
+                card.appendChild(canvas);
+                initChart(canvas, cellData, yMin, yMax);
+            } else {
+                card.appendChild(header);
+                card.innerHTML += `<div class="no-data">No data for ${ctrl} (${topo})</div>`;
+            }
+            grid.appendChild(card);
+        }
+
+        // Plugin to draw error bars (Std Dev)
+        const errorBarPlugin = {
+            id: 'errorBarPlugin',
+            afterDatasetsDraw: (chart) => {
+                const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(left, top, width, height);
+                ctx.clip();
+                chart.data.datasets.forEach((dataset, i) => {
+                    if (dataset.errorBars) {
+                        const meta = chart.getDatasetMeta(i);
+                        if(meta.hidden) return; 
+                        meta.data.forEach((element, index) => {
+                            const { x } = element;
+                            const bars = dataset.errorBars[index];
+                            if (!bars || bars.min === null || bars.max === null) return;
+                            const scale = chart.scales.y;
+                            const yMin = scale.getPixelForValue(Math.max(0, bars.min));
+                            const yMax = scale.getPixelForValue(bars.max);
+                            ctx.save();
+                            ctx.strokeStyle = dataset.borderColor;
+                            ctx.lineWidth = 2.5;
+                            
+                            // Vertical Line
+                            ctx.beginPath();
+                            ctx.moveTo(x, yMin);
+                            ctx.lineTo(x, yMax);
+                            ctx.stroke();
+
+                            // Caps
+                            const capWidth = 5;
+                            ctx.beginPath();
+                            ctx.moveTo(x - capWidth, yMin);
+                            ctx.lineTo(x + capWidth, yMin);
+                            ctx.moveTo(x - capWidth, yMax);
+                            ctx.lineTo(x + capWidth, yMax);
+                            ctx.stroke();
+                            
+                            ctx.restore();
+                        });
+                    }
+                });
+                ctx.restore();
+            }
+        };
+
+        function initChart(canvas, scenarios, yMin, yMax, extraOptions = {}, extraPlugins = []) {
+            const ctx = canvas.getContext('2d');
+            const reference = scenarios[0];
+            const keys = Object.keys(reference.data[0]);
+            const xKey = ['switches', 'num_switches', 'hosts', 'Threads'].find(k => keys.includes(k)) || keys[0];
+            const yKey = reference.selectedY;
+            const xLabel = xKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            
+            let yLabel = yKey;
+            const yLower = yKey.toLowerCase();
+            if (yLower.includes('latency') || yLower.includes('rtt') || yLower.includes('delay') || yLower.includes('time')) {
+                yLabel = 'Time (ms)';
+            } else if (yLower.includes('throughput') || yLower.includes('thr') || yLower.includes('tp')) {
+                yLabel = yLower.includes('kbps') ? 'Throughput (kbps)' : 'Throughput (req/s)';
+            }
+
+            const labels = [...new Set(scenarios.flatMap(s => s.data.map(r => r[xKey])))].sort((a,b) => a-b);
+
+            const datasets = scenarios.map((s, idx) => {
+                const color = getScenarioColor(s.scenario, idx);
+                const data = labels.map(l => {
+                    const row = s.data.find(r => r[xKey] === l);
+                    return row ? row[yKey] : null;
+                });
+
+                const errorBars = labels.map(l => {
+                    const row = s.data.find(r => r[xKey] === l);
+                    if (row && row[yKey + "_min"] !== undefined && row[yKey + "_max"] !== undefined) {
+                        return { min: row[yKey + "_min"], max: row[yKey + "_max"] };
+                    }
+                    return null;
+                });
+
+                return {
+                    label: s.scenario,
+                    data: data,
+                    errorBars: errorBars,
+                    borderColor: color,
+                    backgroundColor: color,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    tension: 0.1
+                };
+            });
+
+            // Use passed global min/max if valid, otherwise calculate local
+            let calcMin = Infinity, calcMax = -Infinity;
+            
+            // If globals are infinite (no data found globally?), fallback to local
+            if (yMin === undefined || yMin === Infinity) yMin = Infinity;
+            if (yMax === undefined || yMax === -Infinity) yMax = -Infinity;
+
+            // We still calculate local to ensure we have something if globals fail
+            datasets.forEach(d => {
+                d.data.forEach(v => {
+                    if (v !== null && v !== undefined && !isNaN(v)) {
+                        calcMin = Math.min(calcMin, v);
+                        calcMax = Math.max(calcMax, v);
+                    }
+                });
+                if (d.errorBars) {
+                    d.errorBars.forEach(eb => {
+                        if (eb) {
+                            if (eb.min !== null && !isNaN(eb.min)) calcMin = Math.min(calcMin, eb.min);
+                            if (eb.max !== null && !isNaN(eb.max)) calcMax = Math.max(calcMax, eb.max);
+                        }
+                    });
+                }
+            });
+
+            // Use global if available and valid, else local
+            let finalMin = (yMin !== Infinity) ? yMin : calcMin;
+            let finalMax = (yMax !== -Infinity) ? yMax : calcMax;
+
+            const range = (finalMax !== -Infinity && finalMin !== Infinity) ? finalMax - finalMin : 0;
+            const padding = range === 0 ? (finalMax === 0 ? 1 : Math.abs(finalMax) * 0.1) : range * 0.05;
+            
+            // Apply padding to the final range
+            const suggestedMin = (finalMin !== Infinity) ? Math.max(0, finalMin - padding) : undefined;
+            const suggestedMax = (finalMax !== -Infinity) ? finalMax + padding : undefined;
+
+            new Chart(ctx, {
+                type: 'line',
+                plugins: [errorBarPlugin, ...extraPlugins],
+                data: { labels, datasets },
+                options: deepMerge({
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { 
+                            display: true, 
+                            position: 'top',
+                            labels: { boxWidth: 12, font: { size: 14 }, color: '#9ca3af', padding: 10 }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            ticks: { color: '#64748b', font: { size: 12 } },
+                            grid: { display: false },
+                            title: { display: true, text: xLabel, color: '#64748b', font: { size: 14 } }
+                        },
+                        y: { 
+                            ticks: { color: '#64748b', font: { size: 12 } },
+                            grid: { color: '#1f2937' },
+                            min: suggestedMin, // Force exact min
+                            max: suggestedMax,  // Force exact max
+                            title: { display: true, text: yLabel, color: '#64748b', font: { size: 14 } }
+                        }
+                    }
+                }, extraOptions)
+            });
+        }
+
+        function getScenarioColor(scenario, index) {
+            const s = scenario.toLowerCase();
+            if (s.includes('baseline') || s.includes('traffic')) return '#4ade80';
+            if (s.includes('dos')) return '#ef4444';
+            if (s.includes('slowloris')) return '#f97316';
+            if (s.includes('malformed')) return '#a855f7';
+            if (s.includes('rest')) return '#3b82f6';
+            const palette = ['#38bdf8', '#fbbf24', '#a855f7', '#f472b6'];
+            return palette[index % palette.length];
+        }
+
+        function exportChartData(ctrl, topo, mInfo, data) {
+            if (!data || data.length === 0) return;
+            
+            const ref = data[0];
+            const keys = Object.keys(ref.data[0]);
+            const xKey = ['switches', 'num_switches', 'hosts', 'Threads'].find(k => keys.includes(k)) || keys[0];
+            const yKey = ref.selectedY;
+
+            const xValues = new Set();
+            data.forEach(s => s.data.forEach(r => xValues.add(r[xKey])));
+            const sortedX = Array.from(xValues).sort((a, b) => a - b);
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            let header = [xKey];
+            data.forEach(s => header.push(s.scenario));
+            csvContent += header.join(",") + "\r\n";
+
+            sortedX.forEach(x => {
+                let row = [x];
+                data.forEach(s => {
+                    const record = s.data.find(r => r[xKey] === x);
+                    row.push(record ? record[yKey] : "");
+                });
+                csvContent += row.join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${ctrl}_${topo}_${mInfo.label.replace(/ /g, '_')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function isObject(item) {
+            return (item && typeof item === 'object' && !Array.isArray(item));
+        }
+
+        function deepMerge(target, ...sources) {
+            if (!sources.length) return target;
+            const source = sources.shift();
+
+            if (isObject(target) && isObject(source)) {
+                for (const key in source) {
+                    if (isObject(source[key])) {
+                        if (!target[key]) Object.assign(target, { [key]: {} });
+                        deepMerge(target[key], source[key]);
+                    } else {
+                        Object.assign(target, { [key]: source[key] });
+                    }
+                }
+            }
+            return deepMerge(target, ...sources);
+        }
+
+        async function batchExport() {
+            const btn = document.getElementById('batchExportBtn');
+            if (btn.disabled) return;
+
+            const originalText = btn.innerText;
+            btn.innerText = "Preparing...";
+            btn.disabled = true;
+
+            try {
+                if (!window.jspdf) throw new Error("jsPDF library not loaded");
+
+                const zip = new JSZip();
+                const viewMode = document.getElementById('viewModeSelector').value;
+                const sectionIdx = document.getElementById('sectionSelector').value;
+                const section = thesisStructure[sectionIdx];
+                if (!section) throw new Error("No section selected");
+
+                const canvas = document.createElement('canvas');
+                canvas.width = 800;
+                canvas.height = 600;
+                
+                const sectionPrefix = section.name.replace(/[^a-zA-Z0-9]/g, '');
+
+                let tasks = [];
+                for (const mInfo of section.metrics) {
+                    const metricData = allData.filter(d => d.metric.toUpperCase() === mInfo.key.toUpperCase());
+                    const metricFolder = zip.folder(mInfo.label.replace(/[^a-z0-9]/gi, '_'));
+
+                    if (viewMode === 'controller') {
+                        for (const ctrl of controllers) {
+                            const ctrlSubset = metricData.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                            const { min, max } = calcBounds(ctrlSubset);
+                            for (const topo of topologies) {
+                                const cellData = ctrlSubset.filter(d => d.topology.toUpperCase() === topo.toUpperCase());
+                                if (cellData.length > 0) {
+                                    tasks.push({ canvas, data: cellData, min, max, filename: `${sectionPrefix}_${ctrl}_${topo}_${mInfo.label.replace(/ /g,'_')}`, zipFolder: metricFolder });
+                                }
+                            }
+                        }
+                    } else { // by topology
+                        for (const topo of topologies) {
+                            const topoSubset = metricData.filter(d => d.topology.toUpperCase() === topo.toUpperCase());
+                            const { min, max } = calcBounds(topoSubset);
+                            for (const ctrl of controllers) {
+                                const cellData = topoSubset.filter(d => d.controller.toUpperCase() === ctrl.toUpperCase());
+                                if (cellData.length > 0) {
+                                    tasks.push({ canvas, data: cellData, min, max, filename: `${sectionPrefix}_${topo}_${ctrl}_${mInfo.label.replace(/ /g,'_')}`, zipFolder: metricFolder });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                const total = tasks.length;
+                if (total === 0) throw new Error("No data to export for this section.");
+
+                for (let i = 0; i < total; i++) {
+                    const percent = Math.round(((i + 1) / total) * 100);
+                    btn.innerText = `Generating... (${percent}%)`;
+                    await renderAndZip(tasks[i]);
+                }
+
+                btn.innerText = "Zipping...";
+                const content = await zip.generateAsync({ type: "blob" });
+                saveAs(content, `${section.name.replace(/ /g, '_')}_${viewMode}_Export.zip`);
+            } catch (e) {
+                console.error("Batch Export Failed:", e);
+                alert("Export failed: " + e.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function renderAndZip({ canvas, data, min, max, filename, zipFolder }) {
+            return new Promise((resolve, reject) => {
+                const existing = Chart.getChart(canvas);
+                if (existing) existing.destroy();
+
+                const whiteBgPlugin = { id: 'whiteBg', beforeDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, chart.width, chart.height);
+                    ctx.restore();
+                }};
+
+                const exportOptions = {
+                    animation: false, 
+                    responsive: false,
+                    plugins: {
+                        legend: { labels: { color: '#000000', font: { size: 18, weight: 'bold' }, padding: 20, boxWidth: 20 } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#000000', font: { size: 18 } }, title: { color: '#000000', font: { size: 24, weight: 'bold' } } },
+                        y: { ticks: { color: '#000000', font: { size: 18 } }, grid: { color: '#9ca3af', lineWidth: 2 }, title: { color: '#000000', font: { size: 24, weight: 'bold' } } }
+                    }
+                };
+
+                initChart(canvas, data, min, max, exportOptions, [whiteBgPlugin]);
+                const chart = Chart.getChart(canvas);
+
+                setTimeout(() => {
+                    try {
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({ orientation: 'l', unit: 'px', format: [canvas.width, canvas.height] });
+                        pdf.addImage(chart.toBase64Image('image/png', 1.0), 'PNG', 0, 0, canvas.width, canvas.height);
+                        zipFolder.file(`${filename}.pdf`, pdf.output('blob'));
+                    } catch (e) {
+                        console.error(`Failed to generate PDF for ${filename}:`, e);
+                    } finally {
+                        chart.destroy();
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+    </script>
+</body>
+</html>

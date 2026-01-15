@@ -1,0 +1,13 @@
+Name                  Version                         Rev    Tracking         Publisher    Notes
+bare                  1.0                             5      latest/stable    canonical**  base
+core18                20250910                        2952   latest/stable    canonical**  base
+core24                20250829                        1196   latest/stable    canonical**  base
+gnome-3-34-1804       0+git.3556cb3                   93     latest/stable/…  canonical**  -
+gnome-46-2404         0+git.4ca00c0-sdk0+git.df43897  125    latest/stable    canonical**  -
+gnome-calculator      48.1                            972    latest/stable/…  canonical**  -
+gnome-characters      48.0                            805    latest/stable/…  canonical**  -
+gnome-logs            45.0                            129    latest/stable/…  canonical**  -
+gnome-system-monitor  48.1                            193    latest/stable/…  canonical**  -
+gtk-common-themes     0.1-81-g442e511                 1535   latest/stable/…  canonical**  -
+mesa-2404             25.0.7-snap207                  1110   latest/stable    canonical**  -
+snapd                 2.71                            25202  latest/stable    canonical**  snapd

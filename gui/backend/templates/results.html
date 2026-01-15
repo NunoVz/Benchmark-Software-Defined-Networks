@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmark Results</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top, #111827 0, transparent 55%),
+                radial-gradient(circle at bottom, #020617 0, #000 65%);
+            margin: 0;
+            padding: 24px 16px;
+            text-align: center;
+            color: #e5e7eb;
+        }
+
+        h1 {
+            color: #f9fafb;
+            margin-top: 0;
+            font-size: 24px;
+            letter-spacing: 0.03em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(15, 23, 42, 0.98);
+            padding: 24px 22px 30px;
+            border-radius: 14px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid #1f2937;
+            text-align: left;
+        }
+
+        .category {
+            background: #020617;
+            padding: 18px 18px 20px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 26px rgba(15,23,42,0.9);
+            border-left: 4px solid #38bdf8;
+        }
+
+        .category h2 {
+            margin-top: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e0f2fe;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+
+        th {
+            background: #0f172a;
+            padding: 10px;
+            font-size: 13px;
+            text-align: left;
+            color: #e5e7eb;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        td {
+            background: #020617;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: #d1d5db;
+            border-bottom: 1px solid #111827;
+        }
+
+        tr:nth-child(even) td {
+            background: #020617;
+        }
+
+        tr:hover td {
+            background: #0b1120;
+        }
+
+        a {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 18px;
+            background: transparent;
+            color: #38bdf8;
+            text-decoration: none;
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.16s ease;
+        }
+
+        a:hover {
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .filter-btn {
+            display: inline-block;
+            margin: 6px 6px 4px 0;
+            padding: 7px 16px;
+            border: none;
+            background: #020617;
+            color: #e5e7eb;
+            cursor: pointer;
+            border-radius: 999px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            font-size: 13px;
+            border: 1px solid #374151;
+            transition: all 0.18s;
+        }
+
+        .filter-btn:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 8px 20px rgba(15,23,42,0.9);
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.selected {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9) !important;
+            border-color: transparent;
+            color: #0b1120;
+            box-shadow: 0 10px 26px rgba(56, 189, 248, 0.45);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .chart-container {
+            margin-top: 14px;
+            background: #020617;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #111827;
+        }
+
+        /* Custom Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+            border: 1px solid rgba(15, 23, 42, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Filter Panel Styling */
+        .filter-panel {
+            background: rgba(2, 6, 23, 0.5);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0 30px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            min-width: 110px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .results-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+            color: #64748b;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        let allResults = {};
+        let selectedController = "all";
+        let selectedScenario = "all";
+        let selectedTopology = "all";
+        let allGraphsVisible = false;
+
+
+        function createTableElement(headers, rows) {
+            let wrapper = document.createElement("div");
+            wrapper.style.overflowX = "auto";
+            wrapper.style.marginBottom = "10px";
+
+            let table = document.createElement("table");
+            let thead = document.createElement("thead");
+            let headerRow = document.createElement("tr");
+            headers.forEach(header => {
+                let th = document.createElement("th");
+                th.innerText = header.replace(/_/g, ' ');
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            let tbody = document.createElement("tbody");
+            rows.forEach(row => {
+                let tr = document.createElement("tr");
+                headers.forEach(header => {
+                    let td = document.createElement("td");
+                    td.innerText = row[header] !== null ? row[header] : "N/A";
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            
+            wrapper.appendChild(table);
+            return wrapper;
+        }
+
+        async function fetchResults() {
+            const outputFolder = "{{ output_folder }}";
+            const detailsCheck = document.getElementById('show-details-check');
+            const details = detailsCheck ? detailsCheck.checked : false;
+            const response = await fetch(`/api/results/${outputFolder}?details=${details}`);
+            const data = await response.json();
+    
+            console.log("Fetched Data:", data);
+            if (Object.keys(data).length === 0) {
+                document.getElementById("tables").innerHTML = "<p>No data found.</p>";
+                return;
+            }
+    
+            allResults = data; // Store the results for filtering
+            displayResults(data);
+            applyFilters(); // Update counter initially
+        }
+    
+        function displayResults(data) {
+            const tablesDiv = document.getElementById("tables");
+            tablesDiv.innerHTML = "";
+
+            Object.keys(data).forEach((category) => {
+                let categoryDiv = document.createElement("div");
+                categoryDiv.className = "category";
+
+                let lowerCategory = category.toLowerCase();
+
+                // controller
+                let controller = "other";
+                if (lowerCategory.includes("onos")) controller = "onos";
+                else if (lowerCategory.includes("ryu")) controller = "ryu";
+                else if (lowerCategory.includes("odl")) controller = "odl";
+                categoryDiv.setAttribute("data-controller", controller);
+
+                // scenario
+                let scenario = "baseline";
+                if (lowerCategory.includes("malformed")) scenario = "malformed";
+                else if (lowerCategory.includes("slowloris")) scenario = "slowloris";
+                else if (lowerCategory.includes("traffic")) scenario = "traffic";
+                else if (lowerCategory.includes("dos")) scenario = "dos";
+                else if (lowerCategory.includes("rest")) scenario = "rest";
+                else if (lowerCategory.includes("d-itg") || lowerCategory.includes("ditg")) scenario = "d-itg";
+                categoryDiv.setAttribute("data-scenario", scenario);
+
+                // topology
+                let topology = "unknown";
+                if (lowerCategory.includes("mesh")) topology = "mesh";
+                else if (lowerCategory.includes("3-tier")) topology = "3-tier";
+                categoryDiv.setAttribute("data-topology", topology);
+
+                // título
+                let title = document.createElement("h2");
+                title.innerText = category;
+                categoryDiv.appendChild(title);
+
+                // 🔹 Button to toggle graph for this category
+                const graphToggleBtn = document.createElement("button");
+                graphToggleBtn.className = "filter-btn graph-toggle-btn";
+                graphToggleBtn.innerText = "Show Graph";
+                categoryDiv.appendChild(graphToggleBtn);
+
+                // --- Lógica de Tabelas (Main vs Min/Max) ---
+                const allHeaders = Object.keys(data[category][0] || {});
+                const minMaxHeaders = allHeaders.filter(h => h.endsWith('_min') || h.endsWith('_max'));
+                const mainHeaders = allHeaders.filter(h => !h.endsWith('_min') && !h.endsWith('_max'));
+
+                // 1. Tabela Principal (sem min/max)
+                const mainTable = createTableElement(mainHeaders, data[category]);
+                categoryDiv.appendChild(mainTable);
+
+                // 2. Tabela de Detalhes (se existirem colunas min/max)
+                if (minMaxHeaders.length > 0) {
+                    const statsBtn = document.createElement("button");
+                    statsBtn.className = "filter-btn";
+                    statsBtn.innerText = "Show Std Dev Details";
+                    statsBtn.style.marginTop = "5px";
+                    statsBtn.style.fontSize = "12px";
+                    statsBtn.style.background = "rgba(15, 23, 42, 0.6)";
+                    
+                    const statsContainer = document.createElement("div");
+                    statsContainer.className = "hidden";
+                    statsContainer.style.marginTop = "15px";
+                    statsContainer.style.borderTop = "1px solid #1f2937";
+                    statsContainer.style.paddingTop = "15px";
+                    
+                    // Incluir a primeira coluna (chave) para contexto + colunas min/max
+                    const keyHeader = mainHeaders[0];
+                    const statsHeaders = [keyHeader, ...minMaxHeaders];
+                    
+                    const statsTable = createTableElement(statsHeaders, data[category]);
+                    statsContainer.appendChild(statsTable);
+                    
+                    statsBtn.addEventListener("click", () => {
+                        statsContainer.classList.toggle("hidden");
+                        statsBtn.innerText = statsContainer.classList.contains("hidden") ? "Show Std Dev Details" : "Hide Std Dev Details";
+                    });
+
+                    categoryDiv.appendChild(statsBtn);
+                    categoryDiv.appendChild(statsContainer);
+                }
+
+                // 🔹 Graph container + canvas
+                const chartContainer = document.createElement("div");
+                chartContainer.className = "chart-container hidden";
+
+                const canvas = document.createElement("canvas");
+                // create a safe ID from category name
+                const canvasId = "chart_" + category.replace(/[^a-z0-9]/gi, "_");
+                canvas.id = canvasId;
+                chartContainer.appendChild(canvas);
+
+                // 🔹 Export Button
+                const exportBtn = document.createElement("button");
+                exportBtn.className = "filter-btn";
+                exportBtn.innerText = "Export PDF";
+                exportBtn.style.marginTop = "10px";
+                exportBtn.style.fontSize = "12px";
+                exportBtn.onclick = function() {
+                    const chartInstance = Chart.getChart(canvasId);
+                    if (chartInstance) {
+                        // Sanitize category name for filename
+                        const fileName = category.replace(/ \| /g, '_').replace(/[^a-z0-9_\-]/gi, '_');
+                        exportChart(chartInstance, fileName);
+                    }
+                };
+                chartContainer.appendChild(exportBtn);
+
+                categoryDiv.appendChild(chartContainer);
+                tablesDiv.appendChild(categoryDiv);
+
+                // 🔹 Toggle logic
+                graphToggleBtn.addEventListener("click", () => {
+                    const isHidden = chartContainer.classList.contains("hidden");
+                    if (isHidden) {
+                        chartContainer.classList.remove("hidden");
+                        graphToggleBtn.innerText = "Hide Graph";
+
+                        // only create the chart once
+                        if (!chartContainer.dataset.chartInit) {
+                            createChart(canvasId, allHeaders, data[category]);
+                            chartContainer.dataset.chartInit = "1";
+                        }
+                    } else {
+                        chartContainer.classList.add("hidden");
+                        graphToggleBtn.innerText = "Show Graph";
+                    }
+                });
+            });
+        }
+
+
+    
+        function applyFilters() {
+            const categories = document.querySelectorAll('.category');
+            let visibleCount = 0;
+            categories.forEach(category => {
+                const catCtrl = category.getAttribute("data-controller");
+                const catScen = category.getAttribute("data-scenario");
+                const catTopo = category.getAttribute("data-topology");
+
+                const matchCtrl  = (selectedController === "all" || catCtrl  === selectedController);
+                const matchScen  = (selectedScenario   === "all" || catScen === selectedScenario);
+                const matchTopo  = (selectedTopology   === "all" || catTopo === selectedTopology);
+
+                if (matchCtrl && matchScen && matchTopo) {
+                    category.classList.remove("hidden");
+                    visibleCount++;
+                } else {
+                    category.classList.add("hidden");
+                }
+            });
+
+            const countEl = document.getElementById("visible-count");
+            if(countEl) countEl.innerText = `${visibleCount} result${visibleCount !== 1 ? 's' : ''} found`;
+        }
+
+
+        function filterByController(controller, btn) {
+            selectedController = controller;
+            markSelected(btn, "controller");
+            applyFilters();
+        }
+
+        function filterByScenario(scenario, btn) {
+            selectedScenario = scenario;
+            markSelected(btn, "scenario");
+            applyFilters();
+        }
+
+        function filterByTopology(top, btn) {
+            selectedTopology = top;
+            markSelected(btn, "topology");
+            applyFilters();
+        }
+        function toggleAllGraphs(btn) {
+            const categories = document.querySelectorAll('.category');
+
+            categories.forEach(cat => {
+                const chartContainer = cat.querySelector('.chart-container');
+                const toggleBtn = cat.querySelector('.graph-toggle-btn');
+                if (!chartContainer || !toggleBtn) return;
+
+                if (!allGraphsVisible) {
+                    // Queremos mostrar todos → se estiver escondido, faz click
+                    if (chartContainer.classList.contains('hidden')) {
+                        toggleBtn.click();  // isto já trata de criar o gráfico e mudar o texto
+                    }
+                } else {
+                    // Queremos esconder todos → se estiver visível, faz click
+                    if (!chartContainer.classList.contains('hidden')) {
+                        toggleBtn.click();
+                    }
+                }
+            });
+
+            allGraphsVisible = !allGraphsVisible;
+            if (btn) {
+                btn.innerText = allGraphsVisible ? "Hide All Graphs" : "Show All Graphs";
+            }
+        }
+
+
+        function markSelected(button, group) {
+            // remove 'selected' from all buttons in this group
+            document.querySelectorAll(`.filter-btn[data-group="${group}"]`)
+                .forEach(btn => btn.classList.remove("selected"));
+
+            // add 'selected' to clicked button
+            button.classList.add("selected");
+        }
+
+        const chartColors = [
+            '#38bdf8', '#fbbf24', '#34d399', '#f87171', '#a78bfa', 
+            '#e879f9', '#22d3ee', '#fb923c', '#a3e635', '#94a3b8'
+        ];
+
+        // Plugin para desenhar as barras de erro (Std Dev)
+        const errorBarPlugin = {
+            id: 'errorBarPlugin',
+            afterDatasetsDraw: (chart) => {
+                const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(left, top, width, height);
+                ctx.clip();
+
+                chart.data.datasets.forEach((dataset, i) => {
+                    if (dataset.errorBars) {
+                        const meta = chart.getDatasetMeta(i);
+                        if(meta.hidden) return; 
+                        
+                        meta.data.forEach((element, index) => {
+                            const { x } = element;
+                            const bars = dataset.errorBars[index];
+                            if (!bars || bars.min === null || bars.max === null) return;
+
+                            const scale = dataset.yAxisID === 'y1' ? chart.scales.y1 : chart.scales.y;
+                            const yMin = scale.getPixelForValue(Math.max(0, bars.min));
+                            const yMax = scale.getPixelForValue(bars.max);
+
+                            ctx.save();
+                            ctx.strokeStyle = dataset.borderColor;
+                            ctx.lineWidth = 2.5;
+                            
+                            // Linha Vertical
+                            ctx.beginPath();
+                            ctx.moveTo(x, yMin);
+                            ctx.lineTo(x, yMax);
+                            ctx.stroke();
+
+                            // Caps (Traços horizontais)
+                            const capWidth = 5;
+                            ctx.beginPath();
+                            ctx.moveTo(x - capWidth, yMin);
+                            ctx.lineTo(x + capWidth, yMin);
+                            ctx.moveTo(x - capWidth, yMax);
+                            ctx.lineTo(x + capWidth, yMax);
+                            ctx.stroke();
+                            
+                            ctx.restore();
+                        });
+                    }
+                });
+                ctx.restore();
+            }
+        };
+
+        function createChart(canvasId, headers, rows) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+
+        const xCandidates = [
+            "num switches",
+            "num_switches",
+            "num-switches",
+            "numswitches",
+            "switches",
+            "Switchers",
+            "switchers",
+            "topology_size",
+            "size",
+            "num",
+            "count"
+        ];
+
+        const lowerHeaders = headers.map(h => h.toLowerCase().trim());
+        let xKey = headers[0]; 
+
+        for (let i = 0; i < lowerHeaders.length; i++) {
+            const h = lowerHeaders[i];
+
+            if (xCandidates.includes(h)) {
+                xKey = headers[i];
+                break;
+            }
+
+            if (xCandidates.some(c => c.length > 3 && h.includes(c))) {
+                xKey = headers[i];
+                break;
+            }
+        }
+
+        const labels = rows.map(r => r[xKey]);
+
+        const datasets = [];
+        let useSecondaryAxis = false;
+
+        // Filtra headers para ignorar as colunas de _min e _max na lista principal
+        // E também ignora colunas de detalhes (Min, Max, Std Dev, Percentis) para não criar linhas separadas
+        const mainHeaders = headers.filter(h => 
+            !h.endsWith('_min') && 
+            !h.endsWith('_max') &&
+            !h.startsWith('Min ') &&
+            (!h.startsWith('Max ') || h.includes('Max Throughput')) &&
+            !h.includes('Std Dev') &&
+            !h.includes(' p50') && !h.includes(' p90') &&
+            !['hosts', 'pairs_ok'].includes(h.toLowerCase())
+        );
+
+        mainHeaders.forEach((h, index) => {
+            if (h === xKey) return; 
+            
+            // Verifica se existem colunas min/max correspondentes
+            // Tenta padrão antigo (_min) e novo (Min X)
+            let minKey = h + "_min";
+            let maxKey = h + "_max";
+            
+            if (!headers.includes(minKey)) {
+                // Tenta encontrar "Min X" baseado em "Avg X" ou "Average X"
+                const base = h.replace(/^(Avg|Average) /, '');
+                const tryMin = "Min " + base;
+                const tryMax = "Max " + base;
+                if (headers.includes(tryMin)) minKey = tryMin;
+                if (headers.includes(tryMax)) maxKey = tryMax;
+            }
+
+            const hasErrorBars = headers.includes(minKey) && headers.includes(maxKey);
+
+            const data = rows.map(r => {
+                const v = r[h];
+                if (typeof v === "number") return v;
+                if (v === null || v === undefined) return null;
+                const parsed = parseFloat(v);
+                return isNaN(parsed) ? null : parsed;
+            });
+
+            // Prepara dados das barras de erro se existirem
+            let errorBarsData = null;
+            if (hasErrorBars) {
+                errorBarsData = rows.map(r => ({
+                    min: r[minKey] !== null ? parseFloat(r[minKey]) : null,
+                    max: r[maxKey] !== null ? parseFloat(r[maxKey]) : null
+                }));
+            }
+
+            if (data.some(v => v !== null && !isNaN(v))) {
+                const isThroughput = h.toLowerCase().includes('thr') || h.toLowerCase().includes('throughput');
+                if (isThroughput) useSecondaryAxis = true;
+
+                datasets.push({
+                    label: h.replace(/_/g, ' '),
+                    data: data,
+                    borderColor: chartColors[index % chartColors.length],
+                    backgroundColor: chartColors[index % chartColors.length],
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    fill: false,
+                    tension: 0.2,
+                    yAxisID: isThroughput ? 'y1' : 'y',
+                    errorBars: errorBarsData // Anexa os dados extra ao dataset
+                });
+            }
+        });
+
+        if (datasets.length === 0) return;
+
+        // Calculate min/max for scaling including error bars
+        let yMin = Infinity, yMax = -Infinity;
+        let y1Min = Infinity, y1Max = -Infinity;
+        let hasY = false, hasY1 = false;
+
+        datasets.forEach(d => {
+            const isY1 = d.yAxisID === 'y1';
+            if (isY1) hasY1 = true; else hasY = true;
+
+            // Data points
+            d.data.forEach(v => {
+                if (v !== null && v !== undefined && !isNaN(v)) {
+                    if (isY1) {
+                        y1Min = Math.min(y1Min, v);
+                        y1Max = Math.max(y1Max, v);
+                    } else {
+                        yMin = Math.min(yMin, v);
+                        yMax = Math.max(yMax, v);
+                    }
+                }
+            });
+
+            // Error bars
+            if (d.errorBars) {
+                d.errorBars.forEach(eb => {
+                    if (eb) {
+                        if (isY1) {
+                            if (eb.min !== null && !isNaN(eb.min)) y1Min = Math.min(y1Min, eb.min);
+                            if (eb.max !== null && !isNaN(eb.max)) y1Max = Math.max(y1Max, eb.max);
+                        } else {
+                            if (eb.min !== null && !isNaN(eb.min)) yMin = Math.min(yMin, eb.min);
+                            if (eb.max !== null && !isNaN(eb.max)) yMax = Math.max(yMax, eb.max);
+                        }
+                    }
+                });
+            }
+        });
+
+        const getScaleOpts = (min, max) => {
+            if (min === Infinity || max === -Infinity) return {};
+            const range = max - min;
+            // Add 5% padding, or 10% of max if range is 0
+            const padding = range === 0 ? (max === 0 ? 1 : Math.abs(max) * 0.1) : range * 0.05;
+            return {
+                suggestedMin: Math.max(0, min - padding),
+                suggestedMax: max + padding
+            };
+        };
+
+        const yOpts = hasY ? getScaleOpts(yMin, yMax) : {};
+        const y1Opts = hasY1 ? getScaleOpts(y1Min, y1Max) : {};
+
+        // Determine Y-axis title dynamically based on the data being plotted
+        const yDatasets = datasets.filter(d => d.yAxisID === 'y');
+        const showPrimaryAxis = yDatasets.length > 0;
+        let yTitle = 'Latency / Jitter / Loss';
+
+        if (showPrimaryAxis) {
+            const labels = yDatasets.map(d => d.label);
+            const units = labels.map(l => {
+                const m = l.match(/\((.*?)\)$/);
+                return m ? m[1] : null;
+            });
+            
+            const firstUnit = units[0];
+            const allSameUnit = firstUnit && units.every(u => u === firstUnit);
+
+            if (yDatasets.length === 1) {
+                yTitle = labels[0];
+            } else if (allSameUnit) {
+                if (['s', 'ms', 'us'].includes(firstUnit)) {
+                    yTitle = `Time (${firstUnit})`;
+                } else if (firstUnit === '%') {
+                    yTitle = `Percentage (%)`;
+                } else {
+                    yTitle = `Values (${firstUnit})`;
+                }
+            } else {
+                yTitle = labels.join(' / ');
+            }
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            plugins: [errorBarPlugin], // Regista o plugin
+            data: {
+                labels: labels,
+                datasets: datasets,
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    zoom: {
+                        limits: {
+                            y: { min: 0 },
+                            y1: { min: 0 }
+                        },
+                        pan: {
+                            enabled: true,
+                            mode: 'xy'
+                        },
+                        zoom: {
+                            wheel: { enabled: true, speed: 0.05 },
+                            pinch: { enabled: true },
+                            mode: 'xy'
+                        }
+                    },
+                    legend: { 
+                        display: true,
+                        labels: { 
+                            font: { size: 14 },
+                            color: '#9ca3af'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xKey.replace(/_/g, ' '),
+                            color: '#9ca3af',
+                            font: { size: 16 }
+                        },
+                        ticks: { color: '#9ca3af', font: { size: 14 } },
+                        grid: { color: '#1f2937' }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: showPrimaryAxis,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: yTitle,
+                            color: '#9ca3af',
+                            font: { size: 16 }
+                        },
+                        ticks: { color: '#9ca3af', font: { size: 14 } },
+                        grid: { color: '#1f2937' },
+                        suggestedMin: yOpts.suggestedMin,
+                        suggestedMax: yOpts.suggestedMax
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: useSecondaryAxis,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Throughput',
+                            color: '#9ca3af',
+                            font: { size: 16 }
+                        },
+                        ticks: { color: '#9ca3af', font: { size: 14 } },
+                        grid: { 
+                            drawOnChartArea: false 
+                        },
+                        suggestedMin: y1Opts.suggestedMin,
+                        suggestedMax: y1Opts.suggestedMax
+                    }
+                }
+            }
+        });
+    }
+
+    function exportChart(chart, fileName) {
+        // 1. Save original options
+        const originalOptions = {
+            devicePixelRatio: chart.options.devicePixelRatio,
+            scales: {
+                x: { 
+                    ticks: { color: chart.options.scales.x.ticks.color },
+                    grid: { 
+                        color: chart.options.scales.x.grid.color,
+                        display: chart.options.scales.x.grid.display
+                    },
+                    title: { color: chart.options.scales.x.title.color }
+                },
+                y: {
+                    ticks: { color: chart.options.scales.y.ticks.color },
+                    grid: { color: chart.options.scales.y.grid.color },
+                    title: { color: chart.options.scales.y.title.color }
+                }
+            },
+            plugins: {
+                title: { color: chart.options.plugins.title ? chart.options.plugins.title.color : null },
+                legend: { labels: { color: chart.options.plugins.legend.labels.color } }
+            }
+        };
+        
+        if (chart.options.scales.y1) {
+            originalOptions.scales.y1 = {
+                ticks: { color: chart.options.scales.y1.ticks.color },
+                grid: { color: chart.options.scales.y1.grid.color },
+                title: { color: chart.options.scales.y1.title.color }
+            };
+        }
+
+        // 2. Apply "Thesis" Theme (White bg, Black text)
+        const black = '#000000';
+        const lightGray = '#d1d5db';
+
+        chart.options.devicePixelRatio = 3; // High resolution for export
+        // Update Axes
+        chart.options.scales.x.ticks.color = black;
+        chart.options.scales.x.title.color = black;
+        chart.options.scales.x.grid.display = false;
+
+        chart.options.scales.y.ticks.color = black;
+        chart.options.scales.y.title.color = black;
+        chart.options.scales.y.grid.color = lightGray;
+
+        if (chart.options.scales.y1) {
+            chart.options.scales.y1.ticks.color = black;
+            chart.options.scales.y1.title.color = black;
+            chart.options.scales.y1.grid.color = lightGray;
+        }
+
+        // Update Legend & Title
+        if (chart.options.plugins.title) chart.options.plugins.title.color = black;
+        if (chart.options.plugins.legend) chart.options.plugins.legend.labels.color = black;
+
+        // 3. Add White Background Plugin
+        const whiteBgPlugin = {
+            id: 'whiteBg',
+            beforeDraw: (chart) => {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        };
+        chart.config.plugins.push(whiteBgPlugin);
+
+        // 4. Update Chart (no animation)
+        chart.update('none');
+
+        // 5. Download as PDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: chart.width > chart.height ? 'l' : 'p',
+            unit: 'px',
+            format: [chart.width, chart.height]
+        });
+        pdf.addImage(chart.toBase64Image('image/png', 1.0), 'PNG', 0, 0, chart.width, chart.height);
+        pdf.save((fileName || 'chart') + '.pdf');
+
+        // 6. Revert Changes
+        chart.config.plugins = chart.config.plugins.filter(p => p.id !== 'whiteBg');
+        chart.options.devicePixelRatio = originalOptions.devicePixelRatio;
+        
+        chart.options.scales.x.ticks.color = originalOptions.scales.x.ticks.color;
+        chart.options.scales.x.grid.display = originalOptions.scales.x.grid.display;
+        chart.options.scales.x.grid.color = originalOptions.scales.x.grid.color;
+        chart.options.scales.x.title.color = originalOptions.scales.x.title.color;
+
+        chart.options.scales.y.ticks.color = originalOptions.scales.y.ticks.color;
+        chart.options.scales.y.grid.color = originalOptions.scales.y.grid.color;
+        chart.options.scales.y.title.color = originalOptions.scales.y.title.color;
+
+        if (chart.options.scales.y1 && originalOptions.scales.y1) {
+            chart.options.scales.y1.ticks.color = originalOptions.scales.y1.ticks.color;
+            chart.options.scales.y1.grid.color = originalOptions.scales.y1.grid.color;
+            chart.options.scales.y1.title.color = originalOptions.scales.y1.title.color;
+        }
+
+        if (chart.options.plugins.title) chart.options.plugins.title.color = originalOptions.plugins.title.color;
+        if (chart.options.plugins.legend) chart.options.plugins.legend.labels.color = originalOptions.plugins.legend.labels.color;
+
+        chart.update('none');
+    }
+
+
+
+        
+    
+        window.onload = fetchResults;
+    </script>
+    
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Benchmark Results for {{ output_folder }}</h1>
+        {% if merge_count > 0 %}
+        <div style="display: inline-block; background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.4); color: #a78bfa; padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; margin-bottom: 20px;">
+            Merged Dataset (Sample Size: {{ merge_count }} runs)
+        </div>
+        {% endif %}
+        <a href="/">Back to Selection</a>
+        
+        <div class="filter-panel">
+            <!-- Filter by Controller -->
+            <div class="filter-row">
+                <span class="filter-label">🎛️ Controller</span>
+                <div class="filter-options">
+                    <button class="filter-btn" data-group="controller" onclick="filterByController('onos', this)">ONOS</button>
+                    <button class="filter-btn" data-group="controller" onclick="filterByController('ryu', this)">RYU</button>
+                    <button class="filter-btn" data-group="controller" onclick="filterByController('odl', this)">ODL</button>
+                    <button class="filter-btn" data-group="controller" onclick="filterByController('all', this)">All</button>
+                </div>
+            </div>
+
+            <!-- Filter by Topology -->
+            <div class="filter-row">
+                <span class="filter-label">🌐 Topology</span>
+                <div class="filter-options">
+                    <button class="filter-btn" data-group="topology" onclick="filterByTopology('mesh', this)">Mesh</button>
+                    <button class="filter-btn" data-group="topology" onclick="filterByTopology('3-tier', this)">3-Tier</button>
+                    <button class="filter-btn" data-group="topology" onclick="filterByTopology('star', this)">Star</button>
+                    <button class="filter-btn" data-group="topology" onclick="filterByTopology('leaf-spine', this)">Leaf-Spine</button>
+                    <button class="filter-btn" data-group="topology" onclick="filterByTopology('all', this)">All</button>
+                </div>
+            </div>
+
+            <!-- Filter by Scenario -->
+            <div class="filter-row">
+                <span class="filter-label">⚡ Scenario</span>
+                <div class="filter-options">
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('baseline', this)">Baseline</button>
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('malformed', this)">Malformed</button>
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('rest', this)">REST</button>
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('slowloris', this)">Slowloris</button>
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('traffic', this)">Traffic</button>
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('dos', this)">DoS</button>
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('d-itg', this)">D-ITG</button>
+                    <button class="filter-btn" data-group="scenario" onclick="filterByScenario('all', this)">All</button>
+                </div>
+            </div>
+
+            <div class="results-meta">
+                <span id="visible-count">Loading results...</span>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <label style="font-size: 12px; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <input type="checkbox" id="show-details-check" onchange="fetchResults()"> Show Min/Max/StdDev
+                    </label>
+                    <button class="filter-btn" onclick="toggleAllGraphs(this)" style="margin:0; font-size: 11px; padding: 5px 12px;">Show All Graphs</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="tables"></div>
+    </div>
+</body>
+</html>
